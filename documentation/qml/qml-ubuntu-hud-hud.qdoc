@@ -1,0 +1,7 @@
+\qmltype Context
+\instantiates Context
+\since 1.0
+
+\qmlproperty list Context::actions
+actions registered to HUD
+

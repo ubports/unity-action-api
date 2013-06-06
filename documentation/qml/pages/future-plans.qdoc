@@ -1,0 +1,35 @@
+/*!
+    \page future-plans.html future-plans
+    \title Future Plans
+    \contentspage {Ubuntu HUD}
+
+background actions.
+
+
+
+Action:
+preview is done live
+virtual bool hasLivePreview() const;
+virtual void setHasLivePreview(bool value);
+
+the action can't be previewed
+virtual bool hasNoPreview() const;
+virtual void setHasNoPreview(bool value);
+
+
+the action requires either live preview or if that is not available then
+a additional preview step has to be shown in the HUD
+
+virtual bool requiresPreview() const;
+virtual void setRequiresPreview(bool value);
+
+todo, how to provide preview if live preview is not available
+todo, partial live preview which would show in HUD?
+
+
+Context:
+Custom Toolbar items.
+
+Parameters:
+more parameters classes.
+*/
