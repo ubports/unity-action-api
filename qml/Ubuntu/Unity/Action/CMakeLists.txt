@@ -10,15 +10,24 @@ set(CORE_SRCS
 add_library(unity-action-qml SHARED
 ${CORE_SRCS}
 )
-target_link_libraries(unity-action-qml unity-action)
+target_link_libraries(unity-action-qml unity-action-qt)
 
 qt5_use_modules(unity-action-qml Qml)
 
+get_target_property(QMAKE_EXECUTABLE Qt5::qmake LOCATION)
+exec_program(${QMAKE_EXECUTABLE} ARGS "-query QT_INSTALL_QML" OUTPUT_VARIABLE QT_IMPORTS_DIR)
+file(TO_CMAKE_PATH "${QT_IMPORTS_DIR}" QT_IMPORTS_DIR)
+
 install(
   TARGETS unity-action-qml
-  ARCHIVE DESTINATION ${LIBDIR}
+  ARCHIVE DESTINATION ${QT_IMPORTS_DIR}/Ubuntu/Unity/Action
   RUNTIME DESTINATION bin
-  LIBRARY DESTINATION ${LIBDIR}
+  LIBRARY DESTINATION ${QT_IMPORTS_DIR}/Ubuntu/Unity/Action
+)
+
+install(
+  FILES qmldir
+  DESTINATION ${QT_IMPORTS_DIR}/Ubuntu/Unity/Action
 )
 
 # copy qmldir file into build directory for shadow builds

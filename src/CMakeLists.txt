@@ -7,15 +7,17 @@ set(CORE_SRCS
 # become one, change tools so they use the plugin
 # instead of calling the classes directly.
 
-add_library(unity-action SHARED
+add_library(unity-action-qt SHARED
 ${CORE_SRCS}
 )
 
-qt5_use_modules(unity-action Qml)
+qt5_use_modules(unity-action-qt Core)
 
 install(
-  TARGETS unity-action
-  ARCHIVE DESTINATION ${LIBDIR}
+  TARGETS unity-action-qt
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION bin
-  LIBRARY DESTINATION ${LIBDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
+
+set_target_properties(unity-action-qt PROPERTIES SOVERSION 0.0.0)

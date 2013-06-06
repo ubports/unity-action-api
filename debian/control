@@ -1,0 +1,59 @@
+Source: unity-action
+Section: libs
+Priority: extra
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+XSBC-Original-Maintainer: Antti Kaijanmäki <antti.kaijanmaki@canonical.com>
+Build-Depends:
+ debhelper (>= 9),
+ libhud2-dev,
+ qt5-default,
+ qt5-qmake,
+ qtbase5-dev,
+ qtbase5-dev-tools,
+ qtdeclarative5-dev,
+ qtdeclarative5-dev-tools,
+ qtdeclarative5-qtquick2-plugin,
+ qtdeclarative5-test-plugin,
+Standards-Version: 3.9.2
+Homepage: https://launchpad.net/unity-action
+Vcs-Bzr: https://code.launchpad.net/unity-action
+Vcs-Browser: https://bazaar.launchpad.net/unity-action
+
+Package: libunity-action-qt1
+Section: libs
+Architecture: amd64 armhf i386
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+Description: Unity Action Qt API
+ Unity Common Action API
+
+Package: libunity-action-qt-dev
+Section: libs
+Architecture: amd64 armhf i386
+Pre-Depends: ${misc:Pre-Depends}
+Depends: libunity-action-qt1
+         ${misc:Depends},
+         ${shlibs:Depends},
+Description: Unity Action Qt API - development files
+ Unity Common Action API
+
+
+Package: qtdeclarative5-unity-action1.0
+Section: libs
+Architecture: amd64 armhf i386
+Depends: libunity-action-qt1,
+         ${misc:Depends},
+         ${shlibs:Depends},
+Description: Unity Action QML Components
+ Unity Common Action API
+
+Package: unity-action-doc
+Section: doc
+Architecture: all
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+Description: Unity Action API - documentation
+ Unity Common Action API
+ .
+ This package contains developer documentation.

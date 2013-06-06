@@ -34,6 +34,9 @@ if(${basic_warnings})
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic")
 endif()
 
+# Standard install paths
+include(GNUInstallDirs)
+
 set(LIBDIR "lib" CACHE PATH "Destination install dir for the library")
 
 set(CMAKE_AUTOMOC ON)
