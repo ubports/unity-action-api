@@ -25,7 +25,6 @@ override_dh_install:
 
 override_dh_install:
 # execute dh_install and fail if something was not packaged
-	#rm -f debian/tmp/usr/lib/*/libhud-qt.so
 	dh_install --fail-missing
 
 %:
