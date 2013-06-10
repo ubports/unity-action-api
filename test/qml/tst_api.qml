@@ -27,7 +27,24 @@ import QtTest 1.0
 Item {
 
     Unity.Action {
+        name: "NewMessage"
+        text: "New Message"
+        iconName: "email-new-message"
+        description: "Write a new Message"
+        keywords: "Compose;Send"
+        enabled: true
+        parameterType: Action.None
+        onTriggered: {}
+    }
 
+    Unity.PreviewAction {
+        text: "Color Balance"
+        commitLabel: "Apply"
+
+        onStarted: {}
+        onResetted: {}
+        onCancelled: {}
+        onTriggered: {}
     }
 
 
