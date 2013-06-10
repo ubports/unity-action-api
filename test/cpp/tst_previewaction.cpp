@@ -14,24 +14,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtTest/QtTest>
-
-#include "tst_action.h"
 #include "tst_previewaction.h"
 
-int main(int argc, char *argv[])
+#include "../../src/unity-preview-action.h"
+
+#include <QtTest/QtTest>
+
+void
+TestPreviewAction::setCommitLabel()
 {
-    bool fail = false;
+    unity::action::PreviewAction action;
 
-    TestAction tst_action;
-    TestPreviewAction tst_previewaction;
+    QSignalSpy spy(&action, SIGNAL(commitLabelChanged(QString)));
+    action.setCommitLabel("Crop");
+    QVERIFY(action.commitLabel() == "Crop");
+    QCOMPARE(spy.count(), 1);
+    QList<QVariant> arguments = spy.takeFirst();
+    QVERIFY(arguments.at(0).toString() == "Crop");
 
-    if (QTest::qExec(&tst_action, argc, argv) != 0)
-        fail = true;
-    if (QTest::qExec(&tst_previewaction, argc, argv) != 0)
-        fail = true;
-    if (fail)
-        return 1;
+    spy.clear();
+    action.setCommitLabel("Crop");
+    QCOMPARE(spy.count(), 0);
+}
 
-    return 0;
+
+void
+TestPreviewAction::testSignals()
+{
+    unity::action::PreviewAction action;
+    //! \todo implement signal testing
+    QSKIP("signal testing not implemented yet.");
 }
