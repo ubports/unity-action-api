@@ -19,7 +19,7 @@
 using namespace unity::action;
 
 //! \private
-class UNITY_ACTION_PRIVATE_API unity::action::PreviewAction::Private {
+class Q_DECL_HIDDEN unity::action::PreviewAction::Private {
 public:
     QString commitLabel;
 };

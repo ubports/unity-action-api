@@ -23,10 +23,9 @@ namespace action {
 }
 }
 
-#include "unity-action-common.h"
 #include "unity-action.h"
 
-class UNITY_ACTION_PUBLIC_API unity::action::PreviewAction : public unity::action::Action
+class Q_DECL_EXPORT unity::action::PreviewAction : public unity::action::Action
 {
     Q_OBJECT
     Q_DISABLE_COPY(PreviewAction)
