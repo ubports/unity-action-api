@@ -6,7 +6,9 @@ set(CORE_SRCS
 set(PUBLIC_HEADER_DIR "${CMAKE_SOURCE_DIR}/include/unity/action")
 
 set(PUBLIC_HEADERS
+    ${PUBLIC_HEADER_DIR}/Action
     ${PUBLIC_HEADER_DIR}/unity-action.h
+    ${PUBLIC_HEADER_DIR}/PreviewAction
     ${PUBLIC_HEADER_DIR}/unity-preview-action.h
 )
 
@@ -25,3 +27,5 @@ install(
 )
 
 set_target_properties(unity-action-qt PROPERTIES SOVERSION 0.0.0)
+
+install(FILES ${PUBLIC_HEADERS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/unity/action" )
