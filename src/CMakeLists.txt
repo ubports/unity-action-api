@@ -3,13 +3,16 @@ set(CORE_SRCS
     unity-preview-action.cpp
 )
 
-# Build everything twice. Since we have only a few
-# source files, this is not an issue. If it does
-# become one, change tools so they use the plugin
-# instead of calling the classes directly.
+set(PUBLIC_HEADER_DIR "${CMAKE_SOURCE_DIR}/include/unity/action")
+
+set(PUBLIC_HEADERS
+    ${PUBLIC_HEADER_DIR}/unity-action.h
+    ${PUBLIC_HEADER_DIR}/unity-preview-action.h
+)
 
 add_library(unity-action-qt SHARED
-${CORE_SRCS}
+    ${CORE_SRCS}
+    ${PUBLIC_HEADERS}
 )
 
 qt5_use_modules(unity-action-qt Core)

@@ -14,8 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "unity-preview-action.h"
-
+#include <unity/action/PreviewAction>
 using namespace unity::action;
 
 //! \private

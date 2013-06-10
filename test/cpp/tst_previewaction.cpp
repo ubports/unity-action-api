@@ -16,7 +16,7 @@
 
 #include "tst_previewaction.h"
 
-#include "../../src/unity-preview-action.h"
+#include <unity/action/PreviewAction>
 
 #include <QtTest/QtTest>
 

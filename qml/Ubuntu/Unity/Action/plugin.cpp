@@ -18,8 +18,8 @@
 
 #include <QtQml>
 
-#include "../../../../src/unity-action.h"
-#include "../../../../src/unity-preview-action.h"
+#include <unity/action/Action>
+#include <unity/action/PreviewAction>
 
 void
 UnityActionQmlPlugin::registerTypes(const char *uri)
