@@ -14,12 +14,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "unity-action.h"
+#include <unity/action/Action>
 
 using namespace unity::action;
 
 //! \private
-class PRIVATE_API unity::action::Action::Private {
+class Q_DECL_HIDDEN unity::action::Action::Private {
 public:
     QString name;
     QString text;

@@ -1,6 +1,7 @@
 set(TEST_SRCS
     main.cpp
     tst_action.cpp
+    tst_previewaction.cpp
 )
 
 add_executable(cpptest ${TEST_SRCS})

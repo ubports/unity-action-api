@@ -16,7 +16,7 @@
 
 #include "tst_action.h"
 
-#include "../../src/unity-action.h"
+#include <unity/action/Action>
 
 #include <QtTest/QtTest>
 

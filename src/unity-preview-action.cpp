@@ -14,24 +14,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtTest/QtTest>
+#include <unity/action/PreviewAction>
+using namespace unity::action;
 
-#include "tst_action.h"
-#include "tst_previewaction.h"
+//! \private
+class Q_DECL_HIDDEN unity::action::PreviewAction::Private {
+public:
+    QString commitLabel;
+};
 
-int main(int argc, char *argv[])
+PreviewAction::PreviewAction(QObject *parent)
+    : Action(parent),
+      d(new Private())
 {
-    bool fail = false;
+}
 
-    TestAction tst_action;
-    TestPreviewAction tst_previewaction;
+PreviewAction::~PreviewAction()
+{
+}
 
-    if (QTest::qExec(&tst_action, argc, argv) != 0)
-        fail = true;
-    if (QTest::qExec(&tst_previewaction, argc, argv) != 0)
-        fail = true;
-    if (fail)
-        return 1;
+QString
+PreviewAction::commitLabel() const
+{
+    return d->commitLabel;
+}
 
-    return 0;
+void
+PreviewAction::setCommitLabel(const QString &value)
+{
+    if (d->commitLabel == value)
+        return;
+    d->commitLabel = value;
+    emit commitLabelChanged(value);
 }
