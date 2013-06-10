@@ -19,14 +19,15 @@
 #include <QtQml>
 
 #include "../../../../src/unity-action.h"
-
+#include "../../../../src/unity-preview-action.h"
 
 void
 UnityActionQmlPlugin::registerTypes(const char *uri)
 {
     // @uri Ubuntu.Unity.Action
 
-  qmlRegisterType<unity::action::Action>         (uri, 1, 0, "Action");
+  qmlRegisterType<unity::action::Action>                (uri, 1, 0, "Action");
+  qmlRegisterType<unity::action::PreviewAction>         (uri, 1, 0, "PreviewAction");
 }
 
 void
