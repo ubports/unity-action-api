@@ -25,6 +25,7 @@ namespace action {
 
 #include <QObject>
 #include <QVariant>
+#include <QScopedPointer>
 
 #ifndef DOXYGEN
 #define PUBLIC_API __attribute__ ((visibility ("default")))
@@ -37,6 +38,7 @@ namespace action {
 class PUBLIC_API unity::action::Action : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(Action)
     Q_ENUMS(unity::action::Action::Type)
     Q_PROPERTY(QString name
                READ name
@@ -117,7 +119,7 @@ signals:
 
 private:
         class Private;
-        Private *d;
+        QScopedPointer<Private> d;
 };
 Q_DECLARE_METATYPE(unity::action::Action::Type)
 #endif

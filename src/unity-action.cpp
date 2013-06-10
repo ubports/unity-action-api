@@ -31,15 +31,14 @@ public:
 };
 
 Action::Action(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),
+      d(new Private())
 {
     qRegisterMetaType<unity::action::Action::Type>();
-    d = new Private();
 }
 
 Action::~Action()
 {
-    delete d;
 }
 
 QString
