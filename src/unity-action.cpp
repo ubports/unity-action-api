@@ -23,7 +23,7 @@ class PRIVATE_API unity::action::Action::Private {
 public:
     QString name;
     QString text;
-    QString icon;
+    QString iconName;
     QString description;
     QString keywords;
     bool enabled;
@@ -72,18 +72,18 @@ Action::setText(const QString &value)
 }
 
 QString
-Action::icon() const
+Action::iconName() const
 {
-    return d->icon;
+    return d->iconName;
 }
 
 void
-Action::setIcon(const QString &value)
+Action::setIconName(const QString &value)
 {
-    if (d->icon == value)
+    if (d->iconName == value)
         return;
-    d->icon = value;
-    emit iconChanged(value);
+    d->iconName = value;
+    emit iconNameChanged(value);
 }
 
 QString
