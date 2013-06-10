@@ -25,6 +25,7 @@ namespace action {
 
 #include <QObject>
 #include <QVariant>
+#include <QScopedPointer>
 
 #ifndef DOXYGEN
 #define PUBLIC_API __attribute__ ((visibility ("default")))
@@ -37,6 +38,7 @@ namespace action {
 class PUBLIC_API unity::action::Action : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(Action)
     Q_ENUMS(unity::action::Action::Type)
     Q_PROPERTY(QString name
                READ name
@@ -46,10 +48,10 @@ class PUBLIC_API unity::action::Action : public QObject
                READ text
                WRITE setText
                NOTIFY textChanged)
-    Q_PROPERTY(QString icon
-               READ icon
-               WRITE setIcon
-               NOTIFY iconChanged)
+    Q_PROPERTY(QString iconName
+               READ iconName
+               WRITE setIconName
+               NOTIFY iconNameChanged)
     Q_PROPERTY(QString description
                READ description
                WRITE setDescription
@@ -84,8 +86,8 @@ public:
         QString text() const;
         void setText(const QString &value);
 
-        QString icon() const;
-        void setIcon(const QString &value);
+        QString iconName() const;
+        void setIconName(const QString &value);
 
         QString description() const;
         void setDescription(const QString &value);
@@ -106,7 +108,7 @@ public slots:
 signals:
         void nameChanged(const QString &value);
         void textChanged(const QString &value);
-        void iconChanged(const QString &value);
+        void iconNameChanged(const QString &value);
         void descriptionChanged(const QString &value);
         void keywordsChanged(const QString &value);
         void enabledChanged(bool value);
@@ -117,7 +119,7 @@ signals:
 
 private:
         class Private;
-        Private *d;
+        QScopedPointer<Private> d;
 };
 Q_DECLARE_METATYPE(unity::action::Action::Type)
 #endif

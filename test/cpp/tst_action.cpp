@@ -55,19 +55,19 @@ TestAction::setText()
 }
 
 void
-TestAction::setIcon()
+TestAction::setIconName()
 {
     unity::action::Action action;
 
-    QSignalSpy spy(&action, SIGNAL(iconChanged(QString)));
-    action.setIcon("my-icon");
-    QVERIFY(action.icon() == "my-icon");
+    QSignalSpy spy(&action, SIGNAL(iconNameChanged(QString)));
+    action.setIconName("my-icon");
+    QVERIFY(action.iconName() == "my-icon");
     QCOMPARE(spy.count(), 1);
     QList<QVariant> arguments = spy.takeFirst();
     QVERIFY(arguments.at(0).toString() == "my-icon");
 
     spy.clear();
-    action.setIcon("my-icon");
+    action.setIconName("my-icon");
     QCOMPARE(spy.count(), 0);
 }
 

@@ -23,7 +23,7 @@ class TestAction : public QObject
 private slots:
     void setName();
     void setText();
-    void setIcon();
+    void setIconName();
     void setDescription();
     void setKeywords();
     void setEnabled();
