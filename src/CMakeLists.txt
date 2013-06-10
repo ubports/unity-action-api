@@ -1,5 +1,6 @@
 set(CORE_SRCS
     unity-action.cpp
+    unity-preview-action.cpp
 )
 
 # Build everything twice. Since we have only a few
