@@ -19,7 +19,7 @@
 using namespace unity::action;
 
 //! \private
-class PRIVATE_API unity::action::Action::Private {
+class UNITY_ACTION_PRIVATE_API unity::action::Action::Private {
 public:
     QString name;
     QString text;

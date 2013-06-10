@@ -23,19 +23,13 @@ namespace action {
 }
 }
 
+#include "unity-action-common.h"
+
 #include <QObject>
 #include <QVariant>
 #include <QScopedPointer>
 
-#ifndef DOXYGEN
-#define PUBLIC_API __attribute__ ((visibility ("default")))
-#define PRIVATE_API __attribute__ ((visibility ("hidden")))
-#else
-#define PUBLIC_API
-#define PRIVATE_API
-#endif
-
-class PUBLIC_API unity::action::Action : public QObject
+class UNITY_ACTION_PUBLIC_API unity::action::Action : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(Action)
