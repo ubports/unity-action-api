@@ -12,7 +12,7 @@ set(PUBLIC_HEADERS
 
 add_library(unity-action-qt SHARED
     ${CORE_SRCS}
-    ${PUBLIC_HEADERS}
+    ${PUBLIC_HEADERS} # public headers have to be included here for Q_DECL_EXPORT to work properly
 )
 
 qt5_use_modules(unity-action-qt Core)
