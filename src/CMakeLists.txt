@@ -34,4 +34,7 @@ install(
 
 set_target_properties(unity-action-qt PROPERTIES SOVERSION 0.0.0)
 
-install(FILES ${PUBLIC_HEADERS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/unity/action" )
+#install the headers
+# TODO: add library version to the path
+# TODO: add .pc file
+#install(FILES ${PUBLIC_HEADERS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/unity/action" )
