@@ -1,6 +1,8 @@
 set(CORE_SRCS
     unity-action.cpp
     unity-preview-action.cpp
+    unity-preview-parameter.cpp
+    unity-preview-range-parameter.cpp
 )
 
 set(PUBLIC_HEADER_DIR "${CMAKE_SOURCE_DIR}/include/unity/action")
@@ -10,6 +12,10 @@ set(PUBLIC_HEADERS
     ${PUBLIC_HEADER_DIR}/unity-action.h
     ${PUBLIC_HEADER_DIR}/PreviewAction
     ${PUBLIC_HEADER_DIR}/unity-preview-action.h
+    ${PUBLIC_HEADER_DIR}/PreviewParameter
+    ${PUBLIC_HEADER_DIR}/unity-preview-parameter.h
+    ${PUBLIC_HEADER_DIR}/PreviewRangeParameter
+    ${PUBLIC_HEADER_DIR}/unity-preview-range-parameter.h
 )
 
 add_library(unity-action-qt SHARED
