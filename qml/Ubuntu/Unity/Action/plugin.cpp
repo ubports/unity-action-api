@@ -20,6 +20,8 @@
 
 #include <unity/action/Action>
 #include <unity/action/PreviewAction>
+#include <unity/action/PreviewParameter>
+#include <unity/action/PreviewRangeParameter>
 
 void
 UnityActionQmlPlugin::registerTypes(const char *uri)
@@ -28,6 +30,9 @@ UnityActionQmlPlugin::registerTypes(const char *uri)
 
   qmlRegisterType<unity::action::Action>                (uri, 1, 0, "Action");
   qmlRegisterType<unity::action::PreviewAction>         (uri, 1, 0, "PreviewAction");
+
+  qmlRegisterInterface<unity::action::PreviewParameter> ("PreviewParameter");
+  qmlRegisterType<unity::action::PreviewRangeParameter> (uri, 1, 0, "PreviewRangeParameter");
 }
 
 void
