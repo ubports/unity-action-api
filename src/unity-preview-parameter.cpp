@@ -14,32 +14,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "plugin.h"
-
-#include <QtQml>
-
-#include <unity/action/Action>
-#include <unity/action/PreviewAction>
 #include <unity/action/PreviewParameter>
-#include <unity/action/PreviewRangeParameter>
+using namespace unity::action;
 
-void
-UnityActionQmlPlugin::registerTypes(const char *uri)
+//! \private
+class Q_DECL_HIDDEN unity::action::PreviewParameter::Private {
+public:
+    void *placeholder;
+};
+
+PreviewParameter::PreviewParameter(QObject *parent)
+    : QObject(parent),
+      d(new Private())
 {
-    // @uri Ubuntu.Unity.Action
-
-  qmlRegisterType<unity::action::Action>                (uri, 1, 0, "Action");
-  qmlRegisterType<unity::action::PreviewAction>         (uri, 1, 0, "PreviewAction");
-
-  qmlRegisterInterface<unity::action::PreviewParameter> ("PreviewParameter");
-  qmlRegisterType<unity::action::PreviewRangeParameter> (uri, 1, 0, "PreviewRangeParameter");
 }
 
-void
-UnityActionQmlPlugin::initializeEngine(QQmlEngine *engine, const char *uri)
+PreviewParameter::~PreviewParameter()
 {
-  Q_UNUSED(uri);
-  Q_UNUSED(engine);
 }
-
-

@@ -14,28 +14,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtTest/QtTest>
+#ifndef UNITY_ACTION_PREVIEW_PARAMETER
+#define UNITY_ACTION_PREVIEW_PARAMETER
 
-#include "tst_action.h"
-#include "tst_previewaction.h"
-#include "tst_previewrangeparameter.h"
-
-int main(int argc, char *argv[])
-{
-    bool fail = false;
-
-    TestAction tst_action;
-    TestPreviewAction tst_previewaction;
-    TestPreviewRangeParameter tst_previewrangeparameter;
-
-    if (QTest::qExec(&tst_action, argc, argv) != 0)
-        fail = true;
-    if (QTest::qExec(&tst_previewaction, argc, argv) != 0)
-        fail = true;
-    if (QTest::qExec(&tst_previewrangeparameter, argc, argv) != 0)
-        fail = true;
-    if (fail)
-        return 1;
-
-    return 0;
+namespace unity {
+namespace action {
+    class PreviewParameter;
 }
+}
+
+#include <QObject>
+
+class Q_DECL_EXPORT unity::action::PreviewParameter : public QObject
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(PreviewParameter)
+
+public:
+
+    virtual ~PreviewParameter();
+
+protected:
+    explicit PreviewParameter(QObject *parent = 0);
+
+private:
+    class Private;
+    QScopedPointer<Private> d;
+};
+
+#endif

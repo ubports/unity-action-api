@@ -14,7 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Ubuntu.Unity.Action 1.0 as Unity
+import Ubuntu.Unity.Action 1.0
 import QtQuick 2.0
 import QtTest 1.0
 
@@ -26,18 +26,18 @@ import QtTest 1.0
  */
 Item {
 
-    Unity.Action {
+    Action {
         name: "NewMessage"
         text: "New Message"
         iconName: "email-new-message"
         description: "Write a new Message"
         keywords: "Compose;Send"
         enabled: true
-        parameterType: Action.None
+        parameterType: None
         onTriggered: {}
     }
 
-    Unity.PreviewAction {
+    PreviewAction {
         text: "Color Balance"
         commitLabel: "Apply"
 
@@ -45,6 +45,14 @@ Item {
         onResetted: {}
         onCancelled: {}
         onTriggered: {}
+    }
+
+    PreviewRangeParameter {
+        text: "lorem ipsum"
+        value: 0
+        minimumValue: -100
+        maximumValue: 100
+        onValueChanged: {}
     }
 
 
