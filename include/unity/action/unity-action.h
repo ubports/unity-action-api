@@ -31,7 +31,7 @@ class Q_DECL_EXPORT unity::action::Action : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(Action)
-    Q_ENUMS(unity::action::Action::Type)
+    Q_ENUMS(Type)
     Q_PROPERTY(QString name
                READ name
                WRITE setName
