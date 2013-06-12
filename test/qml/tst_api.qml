@@ -27,13 +27,14 @@ import QtTest 1.0
 Item {
 
     Action {
+        id: myaction
         name: "NewMessage"
-        text: "New Message"
+        text: "Write New Message"
         iconName: "email-new-message"
         description: "Write a new Message"
         keywords: "Compose;Send"
         enabled: true
-        parameterType: None
+        parameterType: Action.String
         onTriggered: {}
     }
 
@@ -55,6 +56,14 @@ Item {
         onValueChanged: {}
     }
 
+    MenuItem {
+        action: myaction
+        text: "New Message"
+        iconName: "menu-new-message"
+        target: "user@corporation.tld"
+        visible: true
+        enabled: false
+    }
 
     TestCase {
         name: "API Test"
