@@ -19,6 +19,7 @@
 #include "tst_action.h"
 #include "tst_previewaction.h"
 #include "tst_previewrangeparameter.h"
+#include "tst_menuitem.h"
 
 int main(int argc, char *argv[])
 {
@@ -27,12 +28,15 @@ int main(int argc, char *argv[])
     TestAction tst_action;
     TestPreviewAction tst_previewaction;
     TestPreviewRangeParameter tst_previewrangeparameter;
+    TestMenuItem tst_menuitem;
 
     if (QTest::qExec(&tst_action, argc, argv) != 0)
         fail = true;
     if (QTest::qExec(&tst_previewaction, argc, argv) != 0)
         fail = true;
     if (QTest::qExec(&tst_previewrangeparameter, argc, argv) != 0)
+        fail = true;
+    if (QTest::qExec(&tst_menuitem, argc, argv) != 0)
         fail = true;
     if (fail)
         return 1;

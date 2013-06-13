@@ -3,6 +3,7 @@ set(CORE_SRCS
     unity-preview-action.cpp
     unity-preview-parameter.cpp
     unity-preview-range-parameter.cpp
+    unity-menu-item.cpp
 )
 
 set(PUBLIC_HEADER_DIR "${CMAKE_SOURCE_DIR}/include/unity/action")
@@ -16,6 +17,8 @@ set(PUBLIC_HEADERS
     ${PUBLIC_HEADER_DIR}/unity-preview-parameter.h
     ${PUBLIC_HEADER_DIR}/PreviewRangeParameter
     ${PUBLIC_HEADER_DIR}/unity-preview-range-parameter.h
+    ${PUBLIC_HEADER_DIR}/MenuItem
+    ${PUBLIC_HEADER_DIR}/unity-menu-item.h
 )
 
 add_library(unity-action-qt SHARED

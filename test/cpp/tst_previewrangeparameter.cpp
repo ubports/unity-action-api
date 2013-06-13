@@ -41,7 +41,7 @@ void
 TestPreviewRangeParameter::setValue()
 {
     unity::action::PreviewRangeParameter *param;
-    param = new unity::action::PreviewRangeParameter;
+    param = new unity::action::PreviewRangeParameter(this);
 
     QSignalSpy spy(param, SIGNAL(valueChanged(float)));
     param->setValue(100);
@@ -59,7 +59,7 @@ void
 TestPreviewRangeParameter::setMinimumValue()
 {
     unity::action::PreviewRangeParameter *param;
-    param = new unity::action::PreviewRangeParameter;
+    param = new unity::action::PreviewRangeParameter(this);
 
     param->setMinimumValue(-100);
     param->setValue(-100);
@@ -91,7 +91,7 @@ void
 TestPreviewRangeParameter::setMaximumValue()
 {
     unity::action::PreviewRangeParameter *param;
-    param = new unity::action::PreviewRangeParameter;
+    param = new unity::action::PreviewRangeParameter(this);
 
     param->setMaximumValue(500);
     param->setValue(500);

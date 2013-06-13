@@ -147,7 +147,7 @@ TestAction::setParameterType()
 void
 TestAction::trigger()
 {
-    unity::action::Action *action = new unity::action::Action();
+    unity::action::Action *action = new unity::action::Action(this);
 
     QSignalSpy spy(action, SIGNAL(triggered(QVariant)));
     action->trigger();
