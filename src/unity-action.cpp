@@ -15,6 +15,7 @@
  */
 
 #include <unity/action/Action>
+#include <QMutex>
 
 using namespace unity::action;
 
@@ -22,6 +23,7 @@ using namespace unity::action;
 class Q_DECL_HIDDEN unity::action::Action::Private {
 public:
     QString name;
+    QString generatedname;
     QString text;
     QString iconName;
     QString description;
@@ -35,6 +37,15 @@ Action::Action(QObject *parent)
       d(new Private())
 {
     qRegisterMetaType<unity::action::Action::Type>();
+    d->enabled = true;
+    d->parameterType = None;
+
+    // autogenerate a unique name
+    static QMutex mutex;
+    QMutexLocker locker(&mutex);
+    static int id = 0;
+    d->name = QString("unity-action-%1").arg(QString::number(id++));
+    d->generatedname = d->name;
 }
 
 Action::~Action()
@@ -52,8 +63,12 @@ Action::setName(const QString &value)
 {
     if (d->name == value)
         return;
-    d->name = value;
-    emit nameChanged(value);
+    if (!value.isNull() && !value.isEmpty())
+        d->name = value;
+    else
+        d->name = d->generatedname;
+
+    emit nameChanged(d->name);
 }
 
 QString
