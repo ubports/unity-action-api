@@ -396,13 +396,13 @@ ActionManager::Private::createHudAction(Action *action)
     QString actionid = action->name();
 
     GSimpleAction *gaction;
-    gaction = g_simple_action_new(qPrintable(QString("hud.%1").arg(actionid)), NULL);
+    gaction = g_simple_action_new(qPrintable(actionid)), NULL);
     g_signal_connect(G_OBJECT(gaction), "activate", G_CALLBACK(ActionManager::Private::hud_action_activated), action);
     g_simple_action_set_enabled(gaction, action->enabled());
     data.gaction = gaction;
 
     HudActionDescription *desc;
-    desc = hud_action_description_new(qPrintable(actionid), NULL);
+    desc = hud_action_description_new(qPrintable(QString("hud.%1").arg(actionid)), NULL);
     updateActionDescription(action, desc);
     data.desc = desc;
 
