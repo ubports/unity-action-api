@@ -4,6 +4,8 @@ set(TEST_SRCS
     tst_previewaction.cpp
     tst_previewrangeparameter.cpp
     tst_menuitem.cpp
+    tst_actioncontext.cpp
+    tst_actionmanager.cpp
 )
 
 set(testCommand ${CMAKE_CURRENT_BINARY_DIR}/cpptest
