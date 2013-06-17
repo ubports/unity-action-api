@@ -396,7 +396,7 @@ ActionManager::Private::createHudAction(Action *action)
     QString actionid = action->name();
 
     GSimpleAction *gaction;
-    gaction = g_simple_action_new(qPrintable(actionid)), NULL);
+    gaction = g_simple_action_new(qPrintable(actionid), NULL);
     g_signal_connect(G_OBJECT(gaction), "activate", G_CALLBACK(ActionManager::Private::hud_action_activated), action);
     g_simple_action_set_enabled(gaction, action->enabled());
     data.gaction = gaction;
