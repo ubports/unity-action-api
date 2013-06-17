@@ -15,6 +15,7 @@
  */
 
 #include <QtTest/QtTest>
+#include <QCoreApplication>
 
 #include "tst_action.h"
 #include "tst_previewaction.h"
@@ -26,6 +27,9 @@
 int main(int argc, char *argv[])
 {
     bool fail = false;
+
+    // needed for QTest::qWait
+    QCoreApplication app(argc, argv);
 
     TestAction tst_action;
     TestPreviewAction tst_previewaction;

@@ -24,7 +24,7 @@
 
 #include <QDebug>
 
-// needed for glib includes.
+// needed for gio includes.
 #undef signals
 #include <libhud-2/hud.h>
 
@@ -304,7 +304,6 @@ ActionManager::Private::updateHudContext(ActionContext *context,
     new_actions += globalActions;
     QSet<Action *> removed_actions = old_actions - new_actions;
     foreach (Action *i, new_actions) {
-        qDebug() << "add action " << i;
         /*! \todo what if not all actions in the context are not added with addAction() ?*/
         Q_ASSERT(hudActions.contains(i));
         HudActionData &hudactdata = hudActions[i];
@@ -494,7 +493,6 @@ ActionManager::Private::actionParameterTypeChanged()
     Action *action= qobject_cast<Action *>(sender());
     Q_ASSERT(action != 0);
     updateActionsWhenNameOrTypeHaveChanged(action);
-    qDebug() << "Action Parameter Type Changed.";
 }
 
 void
@@ -544,6 +542,7 @@ ActionManager::ActionManager(QObject *parent)
                                                             "/com/canonical/unity/actions",
                                                             G_ACTION_GROUP(d->mainActionGroup),
                                                             NULL);
+    Q_ASSERT(d->mainExportId != 0);
 }
 
 ActionManager::~ActionManager()
@@ -589,6 +588,8 @@ ActionManager::addAction(Action *action)
          */
     }
     /*** END HUD ***/
+
+    emit actionsChanged();
 }
 
 void
@@ -597,6 +598,10 @@ ActionManager::removeAction(Action *action)
     if (!d->actions.contains(action))
         return;
     d->actions.remove(action);
+
+    /*! \todo tdb */
+
+    emit actionsChanged();
 }
 
 ActionContext *
@@ -622,6 +627,7 @@ ActionManager::addLocalContext(ActionContext *context)
         // as active.
         context->setActive(true);
     }
+    emit localContextsChanged();
 }
 
 void
@@ -637,7 +643,19 @@ ActionManager::removeLocalContext(ActionContext *context)
     g_dbus_connection_unexport_action_group(g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, NULL),
                                             hudctx.exportid);
     d->hudContexts.remove(context);
+    emit localContextsChanged();
 }
 
+QSet<ActionContext *>
+ActionManager::localContexts() const
+{
+    return d->localContexts;
+}
+
+QSet<Action *>
+ActionManager::actions() const
+{
+    return d->actions;
+}
 
 #include "unity-action-manager.moc"

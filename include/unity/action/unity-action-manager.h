@@ -41,16 +41,18 @@ public:
     explicit ActionManager(QObject *parent = 0);
     virtual ~ActionManager();
 
-    void addAction(Action *action);
-    void removeAction(Action *action);
+    Q_INVOKABLE void addAction(unity::action::Action *action);
+    Q_INVOKABLE void removeAction(unity::action::Action *action);
 
-    ActionContext *globalContext();
-    void addLocalContext(ActionContext *context);
-    void removeLocalContext(ActionContext *context);
-    QSet<ActionContext *> localContexts();
+    Q_INVOKABLE unity::action::ActionContext *globalContext();
+    Q_INVOKABLE void addLocalContext(unity::action::ActionContext *context);
+    Q_INVOKABLE void removeLocalContext(unity::action::ActionContext *context);
+    QSet<ActionContext *> localContexts() const;
+    QSet<Action *> actions() const;
 
 signals:
     void localContextsChanged();
+    void actionsChanged();
 
 private:
         class Private;

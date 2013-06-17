@@ -15,14 +15,20 @@
  */
 
 #include <QObject>
+#include <unity/action/ActionManager>
 
 class TestActionManager : public QObject
 {
     Q_OBJECT
 
 private slots:
+    void initTestCase();
     void testGlobalContext();
     void actionOperations();
     void contextOperations();
+    void actionPropertyChanges();
+
+private:
+    unity::action::ActionManager *manager;
 };
 
