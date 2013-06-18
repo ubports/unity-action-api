@@ -8,9 +8,9 @@ set(TEST_SRCS
     tst_actionmanager.cpp
 )
 
-set(testCommand ${CMAKE_CURRENT_BINARY_DIR}/cpptest
-    -o ${CMAKE_BINARY_DIR}/cpptest.xml,xunitxml
-    -o -,txt)
+set(testCommand dbus-test-runner -t ${CMAKE_CURRENT_BINARY_DIR}/cpptest
+    -p -o -p ${CMAKE_BINARY_DIR}/cpptest.xml,xunitxml
+    -p -o -p -,txt)
 
 pkg_search_module(GIO REQUIRED gio-2.0)
 include_directories(${GIO_INCLUDE_DIRS})

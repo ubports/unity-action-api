@@ -1,14 +1,19 @@
 add_custom_target(qmlunittests)
 
-# add_qml_test macro
-include(QmlTest)
+find_program(qmltestrunner_exe qmltestrunner)
 
-set(qmltest_DEFAULT_IMPORT_PATHS
-  ${CMAKE_CURRENT_BINARY_DIR}/../../qml
+if(NOT qmltestrunner_exe)
+  msg(FATAL_ERROR "Could not locate qmltestrunner.")
+endif()
+
+set(qmltest_command
+  dbus-test-runner -t env -p "QT_QPA_PLATFORM=minimal"
+  -p ${qmltestrunner_exe} -p -input -p ${CMAKE_CURRENT_SOURCE_DIR}/tst_api.qml
+  -p -import ${CMAKE_CURRENT_BINARY_DIR}/../../qml
+  -p -o -p ${CMAKE_BINARY_DIR}/testapi.xml,xunitxml
+  -p -o -p -,txt
 )
 
-set(qmltest_DEFAULT_TARGETS qmlunittests)
-set(qmltest_DEFAULT_NO_ADD_TEST FALSE)
-set(qmltest_DEFAULT_PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=minimal")
-add_qml_test(. api)
-
+add_custom_target(qmltest_api ${qmltest_command})
+add_dependencies(qmlunittests qmltest_api)
+add_test(qmlunittests ${qmltest_command})
