@@ -35,6 +35,10 @@ TestAction::setName()
     spy.clear();
     action.setName("myaction");
     QCOMPARE(spy.count(), 0);
+
+    action.setName("");
+    action.setName("");
+    QCOMPARE(spy.count(), 1);
 }
 
 void

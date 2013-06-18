@@ -23,6 +23,8 @@
 #include <unity/action/PreviewParameter>
 #include <unity/action/PreviewRangeParameter>
 #include <unity/action/MenuItem>
+#include <unity/action/ActionContext>
+#include <unity/action/ActionManager>
 
 void
 UnityActionQmlPlugin::registerTypes(const char *uri)
@@ -36,6 +38,9 @@ UnityActionQmlPlugin::registerTypes(const char *uri)
   qmlRegisterType<unity::action::PreviewRangeParameter> (uri, 1, 0, "PreviewRangeParameter");
 
   qmlRegisterType<unity::action::MenuItem> (uri, 1, 0, "MenuItem");
+
+  qmlRegisterType<unity::action::ActionContext> (uri, 1, 0, "ActionContext");
+  qmlRegisterType<unity::action::ActionManager> (uri, 1, 0, "ActionManager");
 }
 
 void

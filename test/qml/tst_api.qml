@@ -27,7 +27,7 @@ import QtTest 1.0
 Item {
 
     Action {
-        id: myaction
+        id: globalaction
         name: "NewMessage"
         text: "Write New Message"
         iconName: "email-new-message"
@@ -38,7 +38,14 @@ Item {
         onTriggered: {}
     }
 
+    Action {
+        id: myaction1
+        text: "Foo"
+        onTriggered: {}
+    }
+
     PreviewAction {
+        id: previewaction
         text: "Color Balance"
         commitLabel: "Apply"
 
@@ -64,6 +71,32 @@ Item {
         visible: true
         enabled: false
     }
+
+    ActionManager {
+        id: manager
+
+    }
+
+    ActionContext {
+        id: ctx1
+    }
+
+    ActionContext {
+        id: ctx2
+    }
+
+    Component.onCompleted: {
+        manager.globalContext.actions = [globalaction];
+        manager.globalContext.addLocalContext(ctx1);
+        manager.globalContext.addLocalContext(ctx2);
+
+        ctx1.addAction(myaction1)
+        ctx2.addAction(myaction1)
+        ctx2.addAction(previewaction)
+
+        ctx2.active = true
+    }
+
 
     TestCase {
         name: "API Test"

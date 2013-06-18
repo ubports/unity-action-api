@@ -15,20 +15,28 @@
  */
 
 #include <QtTest/QtTest>
+#include <QCoreApplication>
 
 #include "tst_action.h"
 #include "tst_previewaction.h"
 #include "tst_previewrangeparameter.h"
 #include "tst_menuitem.h"
+#include "tst_actioncontext.h"
+#include "tst_actionmanager.h"
 
 int main(int argc, char *argv[])
 {
     bool fail = false;
 
+    // needed for QTest::qWait
+    QCoreApplication app(argc, argv);
+
     TestAction tst_action;
     TestPreviewAction tst_previewaction;
     TestPreviewRangeParameter tst_previewrangeparameter;
     TestMenuItem tst_menuitem;
+    TestActionContext tst_actioncontext;
+    TestActionManager tst_actionmanager;
 
     if (QTest::qExec(&tst_action, argc, argv) != 0)
         fail = true;
@@ -37,6 +45,10 @@ int main(int argc, char *argv[])
     if (QTest::qExec(&tst_previewrangeparameter, argc, argv) != 0)
         fail = true;
     if (QTest::qExec(&tst_menuitem, argc, argv) != 0)
+        fail = true;
+    if (QTest::qExec(&tst_actioncontext, argc, argv) != 0)
+        fail = true;
+    if (QTest::qExec(&tst_actionmanager, argc, argv) != 0)
         fail = true;
     if (fail)
         return 1;

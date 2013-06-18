@@ -16,6 +16,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/mod
 option(basic_warnings "Basic compiler warnings." ON)
 include(FindPkgConfig)
 
+pkg_search_module(HUD REQUIRED hud-2)
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11 -fno-permissive -pedantic -Wall -Wextra")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
 
@@ -61,6 +63,7 @@ include_directories(include)
 add_subdirectory(src)
 add_subdirectory(qml)
 add_subdirectory(documentation)
+add_subdirectory(examples)
 
 find_program(qmltestrunner_exe qmltestrunner)
 
