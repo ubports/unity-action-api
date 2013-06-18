@@ -9,7 +9,7 @@ endif()
 set(qmltest_command
   dbus-test-runner -t env -p "QT_QPA_PLATFORM=minimal"
   -p ${qmltestrunner_exe} -p -input -p ${CMAKE_CURRENT_SOURCE_DIR}/tst_api.qml
-  -p -import ${CMAKE_CURRENT_BINARY_DIR}/../../qml
+  -p -import -p ${CMAKE_CURRENT_BINARY_DIR}/../../qml
   -p -o -p ${CMAKE_BINARY_DIR}/testapi.xml,xunitxml
   -p -o -p -,txt
 )
