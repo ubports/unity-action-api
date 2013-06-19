@@ -46,13 +46,13 @@ public:
     /*! \todo maybe call this includeAction() to emphasize
      *        that actions have to be added to the manager
      */
-    void addAction(Action *action);
-    void removeAction(Action *action);
+    Q_INVOKABLE void addAction(unity::action::Action *action);
+    Q_INVOKABLE void removeAction(unity::action::Action *action);
 
     bool active() const;
     void setActive(bool value);
 
-    QSet<Action *> actions();
+    QSet<Action *> actions() const;
 
 signals:
     void activeChanged(bool value);
