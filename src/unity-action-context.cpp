@@ -72,7 +72,7 @@ ActionContext::setActive(bool value)
 }
 
 QSet<Action *>
-ActionContext::actions()
+ActionContext::actions() const
 {
     return d->actions;
 }
