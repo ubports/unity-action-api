@@ -532,8 +532,15 @@ ActionManager::ActionManager(QObject *parent)
       d(new Private)
 {
     d->activeLocalContext = 0;
-    /*! \todo fixme */
-    d->hudManager = hud_manager_new("fixme");
+    const char *appid = getenv("APP_ID");
+    if (appid == 0) {
+        qWarning("%s:\n"
+                 "\tCould not determine application identifier. HUD will not work properly.\n"
+                 "\tProvide your application identifier in $APP_ID environment variable.",
+                 __PRETTY_FUNCTION__);
+        appid = "unknown";
+    }
+    d->hudManager = hud_manager_new(appid);
 
     connect(d->globalContext, SIGNAL(actionsChanged()), d.data(), SLOT(contextActionsChanged()));
 
