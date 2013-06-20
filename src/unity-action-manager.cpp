@@ -150,6 +150,12 @@ struct Q_DECL_HIDDEN ActionData
         g_clear_object(&paramMenu);
     }
 };
+// needed for QHash.key()
+bool operator== (const ActionData &a, const ActionData &b) {
+    // comparing these pointers is enough
+    return a.gaction == b.gaction &&
+           a.desc    == b.desc;
+}
 
 //! \private
 class Q_DECL_HIDDEN unity::action::ActionManager::Private : public QObject
@@ -206,10 +212,10 @@ public:
     /* PreviewAction */
     ActionData createHudPreviewAction(PreviewAction *action);
     void updatePreviewActionParameters(PreviewAction *action, ActionData &adata);
-    void updateParameterMenu(PreviewAction *action, ActionData &adata);
+    void updateParameterMenu(PreviewAction *action, const ActionData &adata);
 
     /* PreviewRangeParameter */
-    void updateRange(PreviewRangeParameter * param, ActionData &adata);
+    void updateRange(PreviewRangeParameter * param, const ActionData &adata);
     void updatePreviewParameterRange(PreviewParameter *parameter);
     static void range_action_activated(GSimpleAction *simpleaction,
                                        GVariant      *parameter,
@@ -900,6 +906,11 @@ ActionManager::Private::previewActionParametersChanged()
 
     updatePreviewActionParameters(action, adata);
     updateParameterMenu(action, adata);
+
+    if (globalContext->actions().contains(action) ||
+        (activeLocalContext != 0 && activeLocalContext->actions().contains(action))) {
+        updateActionGroup();
+    }
 }
 
 void
@@ -995,23 +1006,24 @@ ActionManager::Private::updatePreviewActionParameters(PreviewAction *action,
 }
 
 void
-ActionManager::Private::updateParameterMenu(PreviewAction *action, ActionData &data)
+ActionManager::Private::updateParameterMenu(PreviewAction *action, const ActionData &adata)
 {
-    Q_ASSERT(data.paramMenu != 0);
+    Q_ASSERT(adata.paramMenu != 0);
     /* as g_menu and g_menu_model don't support indexing
      * we just have to clear the whole menu and build a new one
      */
     // newest glib has g_menu_remove_all(), so we can use it in the future
-    while (g_menu_model_get_n_items(G_MENU_MODEL(data.paramMenu)) > 0) {
-        g_menu_remove(data.paramMenu, 0);
+    while (g_menu_model_get_n_items(G_MENU_MODEL(adata.paramMenu)) > 0) {
+        g_menu_remove(adata.paramMenu, 0);
     }
 
     foreach (PreviewParameter *parameter, action->parameters()) {
-        Q_ASSERT(data.params.contains(parameter));
-        Q_ASSERT(data.params[parameter].gmenuitem);
-        g_menu_append_item(data.paramMenu,
-                           data.params[parameter].gmenuitem);
+        Q_ASSERT(adata.params.contains(parameter));
+        Q_ASSERT(adata.params[parameter].gmenuitem);
+        g_menu_append_item(adata.paramMenu,
+                           adata.params[parameter].gmenuitem);
     }
+    hud_action_description_set_parameterized(adata.desc, G_MENU_MODEL(adata.paramMenu));
 
 }
 
@@ -1040,6 +1052,7 @@ void
 ActionManager::Private::previewRangeParameterValueChanged()
 {
     PreviewRangeParameter *parameter = qobject_cast<PreviewRangeParameter *>(sender());
+    Q_ASSERT(parameter != 0);
     foreach (const ActionData &adata, actionData) {
         foreach (const ParameterData &pdata, adata.params) {
             if (pdata.parameter == parameter) {
@@ -1052,14 +1065,23 @@ ActionManager::Private::previewRangeParameterValueChanged()
 void
 ActionManager::Private::previewRangeParameterPropertiesChanged()
 {
-
+    PreviewRangeParameter *parameter = qobject_cast<PreviewRangeParameter *>(sender());
+    Q_ASSERT(parameter != 0);
+    foreach (const ActionData &adata, actionData) {
+        if (adata.params.contains(parameter)) {
+            updateRange(parameter, adata);
+            PreviewAction *previewAction = qobject_cast<PreviewAction *>(actionData.key(adata));
+            Q_ASSERT(previewAction != 0);
+            updateParameterMenu(previewAction, adata);
+        }
+    }
 }
 
 void
-ActionManager::Private::updateRange(PreviewRangeParameter *range, ActionData &data)
+ActionManager::Private::updateRange(PreviewRangeParameter *range, const ActionData &adata)
 {
-    Q_ASSERT(data.params.contains(range));
-    ParameterData pdata = data.params[range];
+    Q_ASSERT(adata.params.contains(range));
+    ParameterData pdata = adata.params[range];
 
     g_menu_item_set_attribute_value(pdata.gmenuitem, "min", g_variant_new_double(range->minimumValue()));
     g_menu_item_set_attribute_value(pdata.gmenuitem, "max", g_variant_new_double(range->maximumValue()));
