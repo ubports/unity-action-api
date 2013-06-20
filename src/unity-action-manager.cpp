@@ -315,7 +315,7 @@ ActionManager::globalContext()
 void
 ActionManager::addLocalContext(ActionContext *context)
 {
-    if (d->localContexts.contains(context))
+    if (d->localContexts.contains(context) || context == d->globalContext)
         return;
     d->localContexts.insert(context);
     connect(context, SIGNAL(activeChanged(bool)), d.data(), SLOT(contextActiveChanged(bool)));
@@ -343,6 +343,10 @@ ActionManager::removeLocalContext(ActionContext *context)
     disconnect(context, SIGNAL(actionsChanged()), d.data(), SLOT(contextActionsChanged()));
 
     d->destroyContext(context);
+    if (d->activeLocalContext == context) {
+        d->activeLocalContext = 0;
+        d->updateActionGroup();
+    }
     emit localContextsChanged();
 }
 
@@ -387,7 +391,28 @@ void
 ActionManager::Private::destroyContext(ActionContext *context)
 {
     Q_ASSERT(contextData.contains(context));
-    //const ContextData &cdata = contextData.value(context);
+    ContextData &cdata = contextData[context];
+
+    foreach (Action *action, context->actions()) {
+
+        // remove the action from this context
+        cdata.actions.remove(action);
+
+        // when actions are removed from this context
+        // we can't destroy their ActionData if any of the
+        // other contexts contain the action.
+        bool inUse = false;
+        foreach (const ContextData &cdata, contextData) {
+            if (cdata.actions.contains(action)) {
+                inUse = true;
+                break;
+            }
+        }
+        if (!inUse) {
+            destroyAction(action);
+        }
+    }
+
     /*! \todo remove publisher from HUD when the API is added */
     contextData.remove(context);
 }
@@ -424,8 +449,9 @@ ActionManager::Private::contextActiveChanged(bool value)
             return;
         } else {
             // deactivate the old active one.
-            activeLocalContext->setActive(false);
+            ActionContext *old = activeLocalContext;
             activeLocalContext = context;
+            old->setActive(false);
             updateActionGroup();
             hud_manager_switch_window_context(hudManager,
                                               contextData[context].publisher);
@@ -549,7 +575,6 @@ ActionManager::Private::updateContext(ActionContext *context)
         foreach(ActionContext *localContext, localContexts) {
             updateHudContext(localContext, oldActions);
         }
-        return;
     }
     updateHudContext(context, oldActions);
 
@@ -603,7 +628,6 @@ ActionManager::Private::updateHudContext(ActionContext *context, QSet<Action *> 
                                                    G_MENU_ATTRIBUTE_LABEL,
                                                    g_variant_new_string(""));
     }
-#warning we probably should exclude actions with parameter type
 }
 
 
@@ -627,10 +651,32 @@ ActionManager::Private::action_activated(GSimpleAction *simpleaction,
         return;
 
     } else if (g_variant_is_of_type(parameter, G_VARIANT_TYPE_STRING)) {
-        Q_ASSERT(action->parameterType() == Action::String);
-        QString arg(g_variant_get_string(parameter, NULL));
-        action->trigger(QVariant(arg));
-
+        PreviewAction *previewAction = qobject_cast<PreviewAction *>(action);
+        if (previewAction) {
+            QString state(g_variant_get_string(parameter, NULL));
+            if (state == "start") {
+                emit previewAction->started();
+                return;
+            } else if (state == "end") {
+                // just skip for now
+                return;
+            } else if (state == "commit") {
+                emit previewAction->trigger();
+                return;
+            } else if (state == "reset") {
+                emit previewAction->resetted();
+                return;
+            } else if (state == "cancel") {
+                emit previewAction->cancelled();
+                return;
+            } else {
+                qWarning("Unknown PreviewAction state: %s", qPrintable(state));
+            }
+        } else {
+            Q_ASSERT(action->parameterType() == Action::String);
+            QString arg(g_variant_get_string(parameter, NULL));
+            action->trigger(QVariant(arg));
+        }
     } else if (g_variant_is_of_type(parameter, G_VARIANT_TYPE_INT32)) {
         Q_ASSERT(action->parameterType() == Action::Integer);
         int arg = g_variant_get_int32(parameter);
@@ -648,33 +694,6 @@ ActionManager::Private::action_activated(GSimpleAction *simpleaction,
 
     } else {
         qWarning("Tried to activate gaction with incorrect parameter type.");
-    }
-
-
-    if (g_variant_is_of_type(parameter, G_VARIANT_TYPE_STRING)) {
-        QString state(g_variant_get_string(parameter, NULL));
-
-        PreviewAction *previewaction = qobject_cast<PreviewAction *>(action);
-        Q_ASSERT(previewaction != 0);
-
-        if (state == "start") {
-            emit previewaction->started();
-            return;
-        } else if (state == "end") {
-            // just skip for now
-            return;
-        } else if (state == "commit") {
-            emit previewaction->trigger();
-            return;
-        } else if (state == "reset") {
-            emit previewaction->resetted();
-            return;
-        } else if (state == "cancel") {
-            emit previewaction->cancelled();
-            return;
-        } else {
-            qWarning("Unknown PreviewAction state: %s", qPrintable(state));
-        }
     }
 }
 
