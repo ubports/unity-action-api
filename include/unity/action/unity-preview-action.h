@@ -20,6 +20,7 @@
 namespace unity {
 namespace action {
     class PreviewAction;
+    class PreviewParameter;
 }
 }
 
@@ -42,12 +43,9 @@ public:
     QString commitLabel() const;
     void setCommitLabel(const QString &value);
 
-    /*! \todo add parameter handling. */
-#if 0
-    QList<Parameter> parameters();
-    void addParameter(Parameter *parameter);
-    void removeParameter(Parameter *parameter);
-#endif
+    QList<PreviewParameter *> parameters();
+    Q_INVOKABLE void addParameter(unity::action::PreviewParameter *parameter);
+    Q_INVOKABLE void removeParameter(unity::action::PreviewParameter *parameter);
 
 signals:
     void started();
@@ -55,6 +53,8 @@ signals:
     void resetted();
 
     void commitLabelChanged(const QString &value);
+
+    void parametersChanged();
 
 private:
     class Private;

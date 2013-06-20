@@ -20,6 +20,8 @@
 #include <unity/action/ActionManager>
 #include <unity/action/ActionContext>
 #include <unity/action/Action>
+#include <unity/action/PreviewAction>
+#include <unity/action/PreviewRangeParameter>
 
 #include <QDebug>
 
@@ -39,6 +41,9 @@ MainWindow::MainWindow(QWidget *parent)
     Action *action5 = new Action(this);
     Action *action6 = new Action(this);
 
+    PreviewAction *previewAction = new PreviewAction(this);
+    PreviewRangeParameter *range = new PreviewRangeParameter(this);
+
     action4->setParameterType(Action::String);
 
     manager->addAction(action1);
@@ -47,6 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
     manager->addAction(action4);
     manager->addAction(action5);
     manager->addAction(action6);
+    manager->addAction(previewAction);
 
     manager->globalContext()->addAction(action1);
     manager->addLocalContext(ctx1);
@@ -55,6 +61,7 @@ MainWindow::MainWindow(QWidget *parent)
     ctx1->addAction(action5);
     ctx2->addAction(action3);
     ctx2->addAction(action6);
+    ctx2->addAction(previewAction);
 
     ctx2->setActive(true);
 
@@ -80,6 +87,31 @@ MainWindow::MainWindow(QWidget *parent)
     action6->setParameterType(Action::String);
     action6->setParameterType(Action::None);
     action6->setText("Action6");
+
+    previewAction->setText("Exposure");
+    previewAction->setName("Exposure");
+    previewAction->addParameter(range);
+    range->setText("Exposure Amount");
+    range->setMinimumValue(-50);
+    range->setMaximumValue(50);
+    range->setValue(25);
+
+    connect(previewAction, &PreviewAction::triggered, [=](const QVariant &arg) {
+        qDebug() << "Preview triggered.";
+    });
+    connect(previewAction, &PreviewAction::cancelled, [=]() {
+        qDebug() << "Preview cancelled.";
+    });
+    connect(previewAction, &PreviewAction::started, [=]() {
+        qDebug() << "Preview started.";
+    });
+    connect(previewAction, &PreviewAction::resetted, [=]() {
+        qDebug() << "Preview resetted.";
+    });
+    connect(range, &PreviewRangeParameter::valueChanged, [=](float value) {
+        qDebug() << "range value:" << value;
+    });
+
 
     connect(action1, &Action::triggered, [=](const QVariant &arg) {
         qDebug() << "Action1 triggered.";

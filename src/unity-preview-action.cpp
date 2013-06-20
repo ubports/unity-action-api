@@ -21,6 +21,7 @@ using namespace unity::action;
 class Q_DECL_HIDDEN unity::action::PreviewAction::Private {
 public:
     QString commitLabel;
+    QList<PreviewParameter *> parameters;
 };
 
 PreviewAction::PreviewAction(QObject *parent)
@@ -46,4 +47,27 @@ PreviewAction::setCommitLabel(const QString &value)
         return;
     d->commitLabel = value;
     emit commitLabelChanged(value);
+}
+
+QList<PreviewParameter *> PreviewAction::parameters()
+{
+    return d->parameters;
+}
+
+void
+PreviewAction::addParameter(unity::action::PreviewParameter *parameter)
+{
+    if (d->parameters.contains(parameter))
+        return;
+    d->parameters.append(parameter);
+    emit parametersChanged();
+}
+
+void
+PreviewAction::removeParameter(unity::action::PreviewParameter *parameter)
+{
+    if (!d->parameters.contains(parameter))
+        return;
+    d->parameters.removeOne(parameter);
+    emit parametersChanged();
 }
