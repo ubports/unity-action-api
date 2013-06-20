@@ -21,8 +21,6 @@
 #include <unity/action/PreviewRangeParameter>
 
 #include <QSet>
-#include <QMutex>
-
 #include <QDebug>
 
 // needed for gio includes.
@@ -172,12 +170,6 @@ public:
     QHash<Action *, ActionData>         actionData;
     HudManager *hudManager;
 
-    // HUD does not support removing actions at this point
-    // for now just simply make them disabled in the eyes of HUD
-    // this needs to be fixed properly when libhud gets support for
-    // removing action descriptions.
-    QList<ActionData>                         hudRemovedActions;
-
     GSimpleActionGroup *actionGroup;
     guint exportId;
 
@@ -291,18 +283,12 @@ ActionManager::~ActionManager()
 void
 ActionManager::addAction(Action *action)
 {
-    // let the global context handle the directly added action
-    if (d->globalContext->actions().contains(action))
-        return;
     d->globalContext->addAction(action);
 }
 
 void
 ActionManager::removeAction(Action *action)
 {
-    // let the global context handle the directly added action
-    if (!d->globalContext->actions().contains(action))
-        return;
     d->globalContext->removeAction(action);
 }
 
@@ -323,13 +309,6 @@ ActionManager::addLocalContext(ActionContext *context)
 
     d->createContext(context);
     d->updateContext(context);
-
-    if (d->localContexts.count() == 1) {
-        // make sure we have at least one active context
-        // so, here we set the first one that gets added
-        // as active.
-        context->setActive(true);
-    }
     emit localContextsChanged();
 }
 
@@ -371,9 +350,6 @@ void
 ActionManager::Private::createContext(ActionContext *context)
 {
     Q_ASSERT(!contextData.contains(context));
-
-    static QMutex mutex;
-    QMutexLocker locker(&mutex);
     static int id = 0;
 
     ContextData cdata;
@@ -984,8 +960,6 @@ ActionManager::Private::updatePreviewActionParameters(PreviewAction *action,
         if (qobject_cast<PreviewRangeParameter *>(parameter)) {
             PreviewRangeParameter *range = qobject_cast<PreviewRangeParameter *>(parameter);
 
-            static QMutex mutex;
-            QMutexLocker locker(&mutex);
             static int id = 0;
 
             ParameterData pdata;
