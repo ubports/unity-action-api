@@ -17,6 +17,8 @@
 #include <unity/action/Action>
 #include <QMutex>
 
+#include <QDebug>
+
 using namespace unity::action;
 
 //! \private
@@ -30,6 +32,19 @@ public:
     QString keywords;
     bool enabled;
     Action::Type parameterType;
+
+    const char *paramTypeName(Action::Type type) {
+        switch (type) {
+        case Action::None:    return "None";
+        case Action::String:  return "String";
+        case Action::Integer: return "Integer";
+        case Action::Bool:    return "Bool";
+        case Action::Real:    return "Real";
+        }
+        // should not be reached
+        Q_ASSERT(0);
+        return "Internal Error";
+    }
 };
 
 Action::Action(QObject *parent)
@@ -177,6 +192,40 @@ Action::setParameterType(Type value)
 void
 Action::trigger(QVariant value)
 {
-    //! \todo validate value type
+    QMetaType::Type targetType = QMetaType::UnknownType;
+
+    switch (d->parameterType) {
+    case None: {
+        break;
+    }
+    case String: {
+        targetType = QMetaType::QString;
+        break;
+    }
+    case Integer: {
+        targetType = QMetaType::Int;
+        break;
+    }
+    case Bool: {
+        targetType = QMetaType::Bool;
+        break;
+    }
+    case Real: {
+        targetType = QMetaType::Float;
+        break;
+    }
+    }
+
+    // need to take a copy of the value as we have to try to convert() it.
+    QVariant tmp = value;
+    if ((targetType == QMetaType::UnknownType && d->parameterType != None) ||
+        (!tmp.canConvert(targetType) || !tmp.convert(targetType))) {
+        qWarning() << __PRETTY_FUNCTION__ << ":\n"
+                   << "\tTrying to trigger action (name: " << d->name << " :: text: " << d->text << ")\n"
+                   << "\twhich has parameter type '" << d->paramTypeName(d->parameterType) << "'\n"
+                   << "\twith incompatible parameter value (" << value << ")";
+        return;
+    }
+
     emit triggered(value);
 }
