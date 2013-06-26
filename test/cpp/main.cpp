@@ -26,8 +26,6 @@
 
 int main(int argc, char *argv[])
 {
-    bool fail = false;
-
     // needed for QTest::qWait
     QCoreApplication app(argc, argv);
 
@@ -39,18 +37,16 @@ int main(int argc, char *argv[])
     TestActionManager tst_actionmanager;
 
     if (QTest::qExec(&tst_action, argc, argv) != 0)
-        fail = true;
+        return 1;
     if (QTest::qExec(&tst_previewaction, argc, argv) != 0)
-        fail = true;
+        return 1;
     if (QTest::qExec(&tst_previewrangeparameter, argc, argv) != 0)
-        fail = true;
+        return 1;
     if (QTest::qExec(&tst_menuitem, argc, argv) != 0)
-        fail = true;
+        return 1;
     if (QTest::qExec(&tst_actioncontext, argc, argv) != 0)
-        fail = true;
+        return 1;
     if (QTest::qExec(&tst_actionmanager, argc, argv) != 0)
-        fail = true;
-    if (fail)
         return 1;
 
     return 0;
