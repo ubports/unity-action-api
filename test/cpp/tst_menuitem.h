@@ -29,5 +29,7 @@ private slots:
     void setEnabled();
 
     void verifyTargetType();
+
+    void deletedAction();
 };
 
