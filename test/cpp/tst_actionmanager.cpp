@@ -239,4 +239,114 @@ TestActionManager::actionPropertyChanges()
     g_clear_object(&action_group);
 }
 
+void
+TestActionManager::deletedGlobalContext()
+{
+    // detect if the client accidentally calls delete on global context
+    // and make sure we don't crash
+    delete manager->globalContext();
+}
+
+void
+TestActionManager::deletedLocalContext()
+{
+    // if local context is added to the manager and delete is called for it
+    // before it's removed we must detect this and not crash
+
+    ActionContext *ctx1 = new ActionContext();
+    ActionContext *ctx2 = new ActionContext();
+
+    Action *action1 = new Action(ctx1);
+    Action *action2 = new Action(ctx1);
+    Action *action3 = new Action(ctx1);
+    Action *action4 = new Action(ctx2);
+    Action *action5 = new Action(ctx2);
+
+
+    ctx1->addAction(action1);
+    ctx1->addAction(action2);
+    ctx1->addAction(action3);
+    manager->addLocalContext(ctx1);
+
+    ctx2->addAction(action4);
+    ctx2->addAction(action5);
+    manager->addLocalContext(ctx2);
+
+    QSignalSpy ctxspy(manager, SIGNAL(localContextsChanged()));
+
+    delete ctx1;
+    QCOMPARE(ctxspy.count(), 1);
+    QVERIFY(!manager->localContexts().contains(ctx1));
+    ctx1 = 0;
+
+    delete ctx2;
+    QCOMPARE(ctxspy.count(), 2);
+    QVERIFY(!manager->localContexts().contains(ctx2));
+    ctx2 = 0;
+}
+
+void
+TestActionManager::deletedAction()
+{
+    // if action is added to the manager and delete is called for it
+    // before it's removed we must detect this and not crash
+
+    ActionContext *gctx = manager->globalContext();
+    ActionContext *ctx1 = new ActionContext();
+    ActionContext *ctx2 = new ActionContext();
+
+    Action *action1 = new Action(gctx);
+    Action *action2 = new Action(ctx1);
+    Action *action3 = new Action(ctx1);
+    Action *action4 = new Action(ctx2);
+    Action *action5 = new Action(ctx2);
+
+
+    gctx->addAction(action1);
+
+    ctx1->addAction(action2);
+    ctx1->addAction(action3);
+    manager->addLocalContext(ctx1);
+
+    ctx2->addAction(action4);
+    ctx2->addAction(action5);
+    manager->addLocalContext(ctx2);
+
+    QSignalSpy spy(manager, SIGNAL(actionsChanged()));
+    QCOMPARE(manager->actions().count(), 5);
+
+    // delete action1 directly from globalContext
+    delete action1;
+    QCOMPARE(spy.count(), 1);
+    QVERIFY(!manager->actions().contains(action1));
+    QCOMPARE(manager->actions().count(), 4);
+    action1 = 0;
+
+    // delete action2 directly from ctx1
+    delete action2;
+    QCOMPARE(spy.count(), 2);
+    QVERIFY(!manager->actions().contains(action2));
+    QCOMPARE(manager->actions().count(), 3);
+    action2 = 0;
+
+    // remove action3 indirectly by destroying ctx1
+    delete ctx1;
+    QCOMPARE(spy.count(), 3);
+    QVERIFY(!manager->actions().contains(action3));
+    QCOMPARE(manager->actions().count(), 2);
+    ctx1 = 0;
+    action3 = 0;
+
+    // delete action4 and action5 indirectly by destroying ctx2
+    delete ctx2;
+    QCOMPARE(spy.count(), 5); // actionsChanged() gets called multiple times (once per each action in a context)
+    QVERIFY(!manager->actions().contains(action4));
+    QVERIFY(!manager->actions().contains(action5));
+    QCOMPARE(manager->actions().count(), 0);
+    QVERIFY(manager->localContexts().isEmpty());
+    ctx2 = 0;
+    action4 = 0;
+    action5 = 0;
+
+}
 
