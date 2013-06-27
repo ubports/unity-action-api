@@ -84,13 +84,6 @@ TestPreviewAction::parameterOperations()
 }
 
 void
-TestPreviewAction::testSignals()
-{
-    PreviewAction action;
-    // started, cancelled, resetted, triggered
-}
-
-void
 TestPreviewAction::deletedParameter()
 {
     // if parameter is deleted we must detect this and not crash
