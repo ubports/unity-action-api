@@ -314,6 +314,9 @@ ActionManager::globalContext()
 void
 ActionManager::addLocalContext(ActionContext *context)
 {
+    Q_ASSERT(context != 0);
+    if (context == 0)
+        return;
     if (d->localContexts.contains(context) || context == d->globalContext)
         return;
     d->localContexts.insert(context);
@@ -329,6 +332,9 @@ ActionManager::addLocalContext(ActionContext *context)
 void
 ActionManager::removeLocalContext(ActionContext *context)
 {
+    Q_ASSERT(context != 0);
+    if (context == 0)
+        return;
     if (!d->localContexts.contains(context))
         return;
     d->localContexts.remove(context);
