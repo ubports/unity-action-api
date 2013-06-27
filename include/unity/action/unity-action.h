@@ -73,6 +73,8 @@ public:
         virtual ~Action();
 
         QString name() const;
+
+        /*! potentially an expensive operation */
         void setName(const QString &value);
 
         QString text() const;
@@ -91,6 +93,8 @@ public:
         void setEnabled(bool value);
 
         Type parameterType() const;
+
+        /*! potentially an expensive operation */
         void setParameterType(Type value);
 
 public slots:

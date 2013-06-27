@@ -26,6 +26,9 @@ namespace action {
 
 #include "unity-action.h"
 
+/*! even though PreviewAction is subclass of Action not all of the properties
+ *  of Action base class are supported. parameterType must be Action::None
+ */
 class Q_DECL_EXPORT unity::action::PreviewAction : public unity::action::Action
 {
     Q_OBJECT

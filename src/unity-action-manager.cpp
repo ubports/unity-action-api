@@ -257,6 +257,7 @@ ActionManager::ActionManager(QObject *parent)
       d(new Private(this))
 {
     d->activeLocalContext = 0;
+    /*! \todo document me */
     const char *appid = getenv("APP_ID");
     if (appid == 0) {
         qWarning("%s:\n"
@@ -327,6 +328,8 @@ ActionManager::addLocalContext(ActionContext *context)
     d->createContext(context);
     d->updateContext(context);
     emit localContextsChanged();
+
+    /*! \todo if context::active() == true when added, make the context the active one. */
 }
 
 void
