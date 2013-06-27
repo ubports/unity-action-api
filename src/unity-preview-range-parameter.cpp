@@ -30,9 +30,9 @@ PreviewRangeParameter::PreviewRangeParameter(QObject *parent)
     : PreviewParameter(parent),
       d(new Private())
 {
-    d->max = 100;
-    d->min = 0;
-    d->value = 0;
+    d->max = 100.0f;
+    d->min = 0.0f;
+    d->value = 0.0f;
 }
 
 PreviewRangeParameter::~PreviewRangeParameter()
