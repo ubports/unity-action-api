@@ -17,22 +17,38 @@
 #include <QObject>
 #include <unity/action/ActionManager>
 
+typedef struct _GDBusConnection  GDBusConnection;
+typedef struct _GDBusActionGroup GDBusActionGroup;
+
 class TestActionManager : public QObject
 {
     Q_OBJECT
 
 private slots:
     void initTestCase();
+    void cleanupTestCase();
+
+    void cleanup();
+
     void testGlobalContext();
     void actionOperations();
     void contextOperations();
     void actionPropertyChanges();
 
-    void deletedGlobalContext();
     void deletedLocalContext();
     void deletedAction();
 
+    void actionInMultipleContext();
+    void localContextOverridesGlobalContext();
+
+    // do this last as it creates a new globalContext in the effort of
+    // preventing a crash, but anyway the functionality of the ActionManager
+    // is more or less undefined after this.
+    void deletedGlobalContext();
+
 private:
     unity::action::ActionManager *manager;
+    GDBusConnection *dbusc;
+    GDBusActionGroup *action_group;
 };
 

@@ -32,7 +32,26 @@ void
 TestActionManager::initTestCase()
 {
     manager = new ActionManager(this);
+    dbusc = g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, NULL);
+    action_group = g_dbus_action_group_get(dbusc,
+                                           g_dbus_connection_get_unique_name(dbusc),
+                                           "/com/canonical/unity/actions");
 }
+
+void
+TestActionManager::cleanupTestCase()
+{
+    g_clear_object(&action_group);
+}
+
+void
+TestActionManager::cleanup()
+{
+    // after each test make sure the manager is left in a clean state
+    Q_ASSERT(manager->actions().isEmpty());
+    Q_ASSERT(manager->localContexts().isEmpty());
+}
+
 
 void
 TestActionManager::testGlobalContext()
@@ -143,14 +162,7 @@ TestActionManager::actionPropertyChanges()
     Action *action5 = new Action(manager);
     Action *action6 = new Action(manager);
 
-    GDBusConnection *dbusc = g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, NULL);
-    const gchar *my_name = g_dbus_connection_get_unique_name(dbusc);
-    GDBusActionGroup *action_group = g_dbus_action_group_get(dbusc,
-                                                             my_name,
-                                                             "/com/canonical/unity/actions");
-
     QList<QVariant> arguments;
-
 
     manager->globalContext()->addAction(action1);
     manager->globalContext()->addAction(action2);
@@ -235,8 +247,6 @@ TestActionManager::actionPropertyChanges()
     manager->removeLocalContext(ctx2);
     manager->removeAction(action1);
     manager->removeAction(action2);
-
-    g_clear_object(&action_group);
 }
 
 void
@@ -350,3 +360,21 @@ TestActionManager::deletedAction()
 
 }
 
+void
+TestActionManager::actionInMultipleContext()
+{
+    /* If Action is added to multiple contexts
+     * the manager has to be aware of the action
+     * as long as it's part of any of the contexts.
+     */
+}
+
+void
+TestActionManager::localContextOverridesGlobalContext()
+{
+    /* If local context defines an action with the same
+     * name with an action in the global context the
+     * local context action must override the global
+     * one.
+     */
+}
