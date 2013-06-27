@@ -17,13 +17,16 @@
 #include "tst_previewaction.h"
 
 #include <unity/action/PreviewAction>
+#include <unity/action/PreviewRangeParameter>
 
 #include <QtTest/QtTest>
+
+using namespace unity::action;
 
 void
 TestPreviewAction::setCommitLabel()
 {
-    unity::action::PreviewAction action;
+    PreviewAction action;
 
     QSignalSpy spy(&action, SIGNAL(commitLabelChanged(QString)));
     action.setCommitLabel("Crop");
@@ -37,11 +40,78 @@ TestPreviewAction::setCommitLabel()
     QCOMPARE(spy.count(), 0);
 }
 
+void
+TestPreviewAction::parameterOperations()
+{
+    PreviewAction action;
+    PreviewRangeParameter param1;
+    PreviewRangeParameter param2;
+
+    QSignalSpy spy(&action, SIGNAL(parametersChanged()));
+
+    QVERIFY(action.parameters().isEmpty());
+
+    action.addParameter(&param1);
+    QCOMPARE(spy.count(), 1);
+
+    action.addParameter(&param2);
+    QCOMPARE(spy.count(), 2);
+
+    QVERIFY(action.parameters().contains(&param1));
+    QVERIFY(action.parameters().contains(&param2));
+
+
+    spy.clear();
+    action.addParameter(&param1);
+    action.addParameter(&param2);
+    QCOMPARE(spy.count(), 0);
+    QCOMPARE(action.parameters().count(), 2);
+
+    spy.clear();
+    action.removeParameter(&param1);
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(action.parameters().count(), 1);
+    QVERIFY(!action.parameters().contains(&param1));
+
+    spy.clear();
+    action.removeParameter(&param1);
+    QCOMPARE(spy.count(), 0);
+    QVERIFY(action.parameters().contains(&param2));
+
+    action.removeParameter(&param2);
+    QCOMPARE(spy.count(), 1);
+    QVERIFY(action.parameters().isEmpty());
+}
 
 void
 TestPreviewAction::testSignals()
 {
-    unity::action::PreviewAction action;
-    //! \todo implement signal testing
-    QSKIP("signal testing not implemented yet.");
+    PreviewAction action;
+    // started, cancelled, resetted, triggered
+}
+
+void
+TestPreviewAction::deletedParameter()
+{
+    // if parameter is deleted we must detect this and not crash
+
+    PreviewAction action;
+    PreviewRangeParameter *param1 = new PreviewRangeParameter();
+    PreviewRangeParameter *param2 = new PreviewRangeParameter();
+
+    action.addParameter(param1);
+    action.addParameter(param2);
+
+    QSignalSpy spy(&action, SIGNAL(parametersChanged()));
+    delete param1;
+    QCOMPARE(spy.count(), 1);
+    QVERIFY(!action.parameters().contains(param1));
+    param1 = 0;
+
+    delete param2;
+    QCOMPARE(spy.count(), 2);
+    QVERIFY(!action.parameters().contains(param2));
+    param2 = 0;
+
+    QVERIFY(action.parameters().isEmpty());
 }

@@ -22,7 +22,10 @@ class TestPreviewAction : public QObject
 
 private slots:
     void setCommitLabel();
-
+    void parameterOperations();
     void testSignals();
+
+    void deletedParameter();
+
 };
 

@@ -15,19 +15,42 @@
  */
 
 #include <unity/action/PreviewAction>
+#include <unity/action/PreviewParameter>
 using namespace unity::action;
 
 //! \private
-class Q_DECL_HIDDEN unity::action::PreviewAction::Private {
+class Q_DECL_HIDDEN unity::action::PreviewAction::Private : public QObject
+{
+    Q_OBJECT
 public:
+    PreviewAction *q;
+
     QString commitLabel;
     QList<PreviewParameter *> parameters;
+
+public slots:
+    void parameterDestroyed(QObject *obj);
 };
+
+void
+PreviewAction::Private::parameterDestroyed(QObject *obj)
+{
+    /* we can not use qobject_cast() as it will fail for
+     * objects about to be destroyed. Instead we can simply cast the
+     * pointer directly and use it as long as it's not 0.
+     */
+    PreviewParameter *parameter = (PreviewParameter *)obj;
+    if (parameter == 0) {
+        return;
+    }
+    q->removeParameter(parameter);
+}
 
 PreviewAction::PreviewAction(QObject *parent)
     : Action(parent),
       d(new Private())
 {
+    d->q = this;
 }
 
 PreviewAction::~PreviewAction()
@@ -57,17 +80,27 @@ QList<PreviewParameter *> PreviewAction::parameters()
 void
 PreviewAction::addParameter(unity::action::PreviewParameter *parameter)
 {
+    Q_ASSERT(parameter != 0);
+    if (parameter == 0)
+        return;
     if (d->parameters.contains(parameter))
         return;
     d->parameters.append(parameter);
+    connect(parameter, SIGNAL(destroyed(QObject *)), d.data(), SLOT(parameterDestroyed(QObject *)));
     emit parametersChanged();
 }
 
 void
 PreviewAction::removeParameter(unity::action::PreviewParameter *parameter)
 {
+    Q_ASSERT(parameter != 0);
+    if (parameter == 0)
+        return;
     if (!d->parameters.contains(parameter))
         return;
+    parameter->disconnect(d.data());
     d->parameters.removeOne(parameter);
     emit parametersChanged();
 }
+
+#include "unity-preview-action.moc"
