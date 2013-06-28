@@ -242,6 +242,9 @@ public slots:
     /* PreviewRangeParameter signals */
     void previewRangeParameterValueChanged();
     void previewRangeParameterPropertiesChanged(); // for all the rest
+
+    /* QObject destroy() handlers */
+    void contextDestroyed(QObject *obj);
 };
 
 
@@ -266,6 +269,7 @@ ActionManager::ActionManager(QObject *parent)
 
     connect(d->globalContext, SIGNAL(actionsChanged()), d.data(), SLOT(contextActionsChanged()));
     connect(d->globalContext, SIGNAL(activeChanged(bool)), d.data(), SLOT(contextActiveChanged(bool)));
+    connect(d->globalContext, SIGNAL(destroyed(QObject*)), d.data(), SLOT(contextDestroyed(QObject *)));
 
     d->actionGroup = g_simple_action_group_new();
 
@@ -282,6 +286,7 @@ ActionManager::ActionManager(QObject *parent)
 
 ActionManager::~ActionManager()
 {
+    d->globalContext->disconnect(d.data());
     g_dbus_connection_unexport_action_group(g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, NULL),
                                             d->exportId);
 }
@@ -290,6 +295,8 @@ void
 ActionManager::addAction(Action *action)
 {
     d->globalContext->addAction(action);
+    // if action is deleted before removeAction() is called on it
+    // globalContext (ActionContext) handles this case for us.
 }
 
 void
@@ -307,11 +314,15 @@ ActionManager::globalContext()
 void
 ActionManager::addLocalContext(ActionContext *context)
 {
+    Q_ASSERT(context != 0);
+    if (context == 0)
+        return;
     if (d->localContexts.contains(context) || context == d->globalContext)
         return;
     d->localContexts.insert(context);
     connect(context, SIGNAL(activeChanged(bool)), d.data(), SLOT(contextActiveChanged(bool)));
     connect(context, SIGNAL(actionsChanged()), d.data(), SLOT(contextActionsChanged()));
+    connect(context, SIGNAL(destroyed(QObject*)), d.data(), SLOT(contextDestroyed(QObject *)));
 
     d->createContext(context);
     d->updateContext(context);
@@ -321,11 +332,13 @@ ActionManager::addLocalContext(ActionContext *context)
 void
 ActionManager::removeLocalContext(ActionContext *context)
 {
+    Q_ASSERT(context != 0);
+    if (context == 0)
+        return;
     if (!d->localContexts.contains(context))
         return;
     d->localContexts.remove(context);
-    disconnect(context, SIGNAL(activeChanged(bool)), d.data(), SLOT(contextActiveChanged(bool)));
-    disconnect(context, SIGNAL(actionsChanged()), d.data(), SLOT(contextActionsChanged()));
+    context->disconnect(d.data());
 
     d->destroyContext(context);
     if (d->activeLocalContext == context) {
@@ -375,7 +388,8 @@ ActionManager::Private::destroyContext(ActionContext *context)
     Q_ASSERT(contextData.contains(context));
     ContextData &cdata = contextData[context];
 
-    foreach (Action *action, context->actions()) {
+    QSet<Action *> actions = cdata.actions;
+    foreach (Action *action, actions) {
 
         // remove the action from this context
         cdata.actions.remove(action);
@@ -612,6 +626,43 @@ ActionManager::Private::updateHudContext(ActionContext *context, QSet<Action *> 
     }
 }
 
+void
+ActionManager::Private::contextDestroyed(QObject *obj)
+{
+    /* we can not use qobject_cast() as it will fail for
+     * objects about to be destroyed. Instead we can simply cast the
+     * pointer directly and use it as long as it's not 0.
+     */
+    ActionContext *ctx = (ActionContext *)obj;
+    if (ctx == 0) {
+        return;
+    }
+
+    if (ctx == globalContext) {
+        /* Somebody called delete on globalContext pointer.
+         * This is clearly a bug in the client code, but we have to try to
+         * manage this in a way we don't crash.
+         *
+         * Let's just print out a big fat critical.
+         */
+        qCritical() << __PRETTY_FUNCTION__ << ":\n"
+                    << "\tClient called delete on our globalContext pointer.\n"
+                    << "\tCreating a new globalContext, but this is clearly a bug\n"
+                    << "\tin the client code. ";
+        globalContext->disconnect(this);
+        destroyContext(globalContext);
+        globalContext = new ActionContext();
+        createContext(globalContext);
+        updateContext(globalContext);
+        connect(globalContext, SIGNAL(actionsChanged()), this, SLOT(contextActionsChanged()));
+        connect(globalContext, SIGNAL(activeChanged(bool)), this, SLOT(contextActiveChanged(bool)));
+        connect(globalContext, SIGNAL(destroyed(QObject*)), this, SLOT(contextDestroyed(QObject *)));
+
+        return;
+    }
+
+    q->removeLocalContext(ctx);
+}
 
 /************************************************************************/
 /*                              Action                                  */
@@ -715,19 +766,11 @@ ActionManager::Private::destroyAction(Action *action)
     Q_ASSERT(actionData.contains(action));
     const ActionData &adata = actionData[action];
 
-    disconnect(action, SIGNAL(nameChanged(QString)), this, SLOT(actionNameChanged()));
-    disconnect(action, SIGNAL(parameterTypeChanged(unity::action::Action::Type)), this, SLOT(actionParameterTypeChanged()));
-    disconnect(action, SIGNAL(enabledChanged(bool)), this, SLOT(actionEnabledChanged()));
-    disconnect(action, SIGNAL(textChanged(QString)), this, SLOT(actionPropertiesChanged()));
-    disconnect(action, SIGNAL(descriptionChanged(QString)), this, SLOT(actionPropertiesChanged()));
-    disconnect(action, SIGNAL(keywordsChanged(QString)), this, SLOT(actionPropertiesChanged()));
-    disconnect(action, SIGNAL(enabledChanged(bool)), this, SLOT(actionPropertiesChanged()));
+    action->disconnect(this);
 
     if (adata.isPreviewAction) {
         PreviewAction *previewAction = qobject_cast<PreviewAction *>(action);
         Q_ASSERT(previewAction != 0);
-        disconnect(previewAction, SIGNAL(commitLabelChanged(QString)), this, SLOT(previewActionCommitLabelChanged()));
-        disconnect(previewAction, SIGNAL(parametersChanged()), this, SLOT(previewActionParametersChanged()));
     }
 
     actionData.remove(action);
@@ -891,7 +934,6 @@ ActionManager::Private::actionPropertiesChanged()
     updateActionDescription(action, actionData[action].desc);
 }
 
-
 /************************************************************************/
 /*                         PreviewAction                                */
 /************************************************************************/
@@ -952,10 +994,7 @@ ActionManager::Private::updatePreviewActionParameters(PreviewAction *action,
             g_signal_handlers_disconnect_by_data(G_OBJECT(pdata.gaction),
                                                  range);
 
-            disconnect(range, SIGNAL(valueChanged()), this, SLOT(previewRangeParameterValueChanged()));
-            disconnect(range, SIGNAL(textChanged(QString)), this, SLOT(previewRangeParameterPropertiesChanged()));
-            disconnect(range, SIGNAL(minimumValueChanged(float)), this, SLOT(previewRangeParameterPropertiesChanged()));
-            disconnect(range, SIGNAL(maximumValueChanged(float)), this, SLOT(previewRangeParameterPropertiesChanged()));
+            range->disconnect(this);
 
             adata.params.remove(range);
         } else {

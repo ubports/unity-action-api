@@ -28,6 +28,10 @@ private slots:
     void contextOperations();
     void actionPropertyChanges();
 
+    void deletedGlobalContext();
+    void deletedLocalContext();
+    void deletedAction();
+
 private:
     unity::action::ActionManager *manager;
 };

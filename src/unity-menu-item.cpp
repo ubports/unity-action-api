@@ -22,19 +22,41 @@ using namespace unity::action;
 
 class Q_DECL_HIDDEN unity::action::MenuItem::Private : public QObject
 {
+    Q_OBJECT
 public:
+    MenuItem *q;
+
     Action *action;
     QString text;
     QString iconName;
     QVariant target;
     bool visible;
     bool enabled;
+
+public slots:
+    void actionDestroyed(QObject *obj);
 };
+
+void
+MenuItem::Private::actionDestroyed(QObject *obj)
+{
+    /* we can not use qobject_cast() as it will fail for
+     * objects about to be destroyed. Instead we can simply cast the
+     * pointer directly and use it as long as it's not 0.
+     */
+    Action *tmp = (Action *)obj;
+    if (tmp == 0) {
+        return;
+    }
+    // simply clear the action.
+    q->setAction(0);
+}
 
 MenuItem::MenuItem(QObject *parent)
     : QObject(parent),
       d(new Private)
 {
+    d->q = this;
     d->action = 0;
     d->visible = true;
     d->enabled = true;
@@ -60,6 +82,13 @@ MenuItem::setAction(Action *value)
 {
     if (d->action == value)
         return;
+
+    if (value == 0) {
+        d->action->disconnect(d.data());
+    } else {
+        d->action->disconnect(d.data());
+        connect(value, SIGNAL(destroyed(QObject*)), d.data(), SLOT(actionDestroyed(QObject *)));
+    }
     d->action = value;
     emit actionChanged();
 }
@@ -138,3 +167,5 @@ MenuItem::setEnabled(bool value)
      d->enabled = value;
      emit enabledChanged(value);
 }
+
+#include "unity-menu-item.moc"

@@ -21,6 +21,8 @@
 
 #include <QtTest/QtTest>
 
+using namespace unity::action;
+
 void
 TestMenuItem::setAction()
 {
@@ -141,4 +143,24 @@ void
 TestMenuItem::verifyTargetType()
 {
     QSKIP("not implemented yet");
+}
+
+void
+TestMenuItem::deletedAction()
+{
+    Action *action = new Action();
+    MenuItem item;
+
+    item.setAction(action);
+
+    QSignalSpy spy(&item, SIGNAL(actionChanged()));
+    delete action;
+    QCOMPARE(spy.count(), 1);
+    QVERIFY(item.action() == 0);
+    action = 0;
+
+    spy.clear();
+    item.setAction(0);
+    QCOMPARE(spy.count(), 0);
+
 }

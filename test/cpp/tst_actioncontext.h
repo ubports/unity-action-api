@@ -23,5 +23,7 @@ class TestActionContext : public QObject
 private slots:
     void setActive();
     void actionOperations();
+
+    void deletedActions();
 };
 

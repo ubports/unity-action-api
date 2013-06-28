@@ -22,6 +22,8 @@
 
 #include <QtTest/QtTest>
 
+using namespace unity::action;
+
 void
 TestActionContext::setActive()
 {
@@ -73,4 +75,33 @@ TestActionContext::actionOperations()
     QVERIFY(ctx->actions().contains(action1) &&
             ctx->actions().contains(action2));
 }
+
+void
+TestActionContext::deletedActions()
+{
+    /* When action is added to the context and then deleted without
+     * being removed we must detect this and remove the action from the
+     * context so that we don't get dangling pointers.
+     */
+
+    ActionContext *ctx =  new ActionContext(this);
+    Action *action1 = new Action();
+    Action *action2 = new Action();
+
+    ctx->addAction(action1);
+    ctx->addAction(action2);
+    QSignalSpy spy(ctx, SIGNAL(actionsChanged()));
+
+    // this should now also make the context to remove the action
+    delete action2;
+    QCOMPARE(spy.count(), 1);
+    QVERIFY(!ctx->actions().contains(action2)); // make sure the pointer was removed
+    action2 = 0;
+
+    delete action1;
+    QCOMPARE(spy.count(), 2);
+    QVERIFY(!ctx->actions().contains(action1)); // make sure the pointer was removed
+    action1 = 0;
+}
+
 
