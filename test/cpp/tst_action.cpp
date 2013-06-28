@@ -180,7 +180,7 @@ TestAction::trigger()
     action->trigger(false);
     QCOMPARE(spy.count(), 0);
 
-    action->trigger(5.5);
+    action->trigger(5.5f);
     QCOMPARE(spy.count(), 0);
 
     action->trigger(QRect());
@@ -208,7 +208,7 @@ TestAction::trigger()
     QCOMPARE(spy.count(), 1);
     QCOMPARE(spy.takeFirst().at(0).toString(), QString("true"));
 
-    action->trigger(5.5);
+    action->trigger(5.5f);
     QCOMPARE(spy.count(), 1);
     QCOMPARE(spy.takeFirst().at(0).toString(), QString("5.5"));
 
@@ -245,7 +245,7 @@ TestAction::trigger()
     QCOMPARE(spy.count(), 1);
     QCOMPARE(spy.takeFirst().at(0).toInt(), 1);
 
-    action->trigger(5.5);
+    action->trigger(5.5f);
     QCOMPARE(spy.count(), 1);
     QCOMPARE(spy.takeFirst().at(0).toInt(), 6);
 
@@ -300,11 +300,11 @@ TestAction::trigger()
     QCOMPARE(spy.count(), 1);
     QCOMPARE(spy.takeFirst().at(0).toBool(), true);
 
-    action->trigger(0.0);
+    action->trigger(0.0f);
     QCOMPARE(spy.count(), 1);
     QCOMPARE(spy.takeFirst().at(0).toBool(), false);
 
-    action->trigger(5.5);
+    action->trigger(5.5f);
     QCOMPARE(spy.count(), 1);
     QCOMPARE(spy.takeFirst().at(0).toBool(), true);
 
@@ -370,32 +370,32 @@ TestAction::trigger()
 
     action->setParameterType(unity::action::Action::Real);
 
-    action->trigger(0.0);
+    action->trigger(0.0f);
     QCOMPARE(spy.count(), 1);
-    QCOMPARE(spy.takeFirst().at(0).toDouble(), 0.0);
+    QCOMPARE(spy.takeFirst().at(0).toFloat(), 0.0f);
 
-    action->trigger(-1.0);
+    action->trigger(-1.0f);
     QCOMPARE(spy.count(), 1);
-    QCOMPARE(spy.takeFirst().at(0).toDouble(), -1.0);
+    QCOMPARE(spy.takeFirst().at(0).toFloat(), -1.0f);
 
 
     // these work because of the automatic type conversion QVariant does
 
     action->trigger(false);
     QCOMPARE(spy.count(), 1);
-    QCOMPARE(spy.takeFirst().at(0).toDouble(), 0.0);
+    QCOMPARE(spy.takeFirst().at(0).toFloat(), 0.0f);
 
     action->trigger(true);
     QCOMPARE(spy.count(), 1);
-    QCOMPARE(spy.takeFirst().at(0).toDouble(), 1.0);
+    QCOMPARE(spy.takeFirst().at(0).toFloat(), 1.0f);
 
     action->trigger("0.0");
     QCOMPARE(spy.count(), 1);
-    QCOMPARE(spy.takeFirst().at(0).toDouble(), 0.0);
+    QCOMPARE(spy.takeFirst().at(0).toFloat(), 0.0f);
 
     action->trigger(-50);
     QCOMPARE(spy.count(), 1);
-    QCOMPARE(spy.takeFirst().at(0).toDouble(), -50.0);
+    QCOMPARE(spy.takeFirst().at(0).toFloat(), -50.0f);
 
 
     /* expected failures */

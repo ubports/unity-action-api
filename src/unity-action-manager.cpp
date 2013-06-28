@@ -982,12 +982,16 @@ ActionManager::Private::updatePreviewActionParameters(PreviewAction *action,
                                                       ActionData &adata)
 {
     QList<PreviewParameter *> currentParameters = action->parameters();
-    QSet<PreviewParameter *> newParameters;
+    QList<PreviewParameter *> newParameters;
     QSet<PreviewParameter *> removedParameters;
 
     foreach (PreviewParameter *parameter, currentParameters) {
         if (!adata.params.contains(parameter)) {
-            newParameters.insert(parameter);
+            /* Keep this as a list now as the previewActions unit test relies
+             * on parameter GActions to be created in the same order as the
+             * PreviewParameters are added to the PreviewAction.
+             */
+            newParameters.append(parameter);
         }
     }
 
@@ -1103,6 +1107,17 @@ ActionManager::Private::range_action_activated(GSimpleAction *simpleaction,
 void
 ActionManager::Private::previewRangeParameterValueChanged()
 {
+    /*! \bug preview parameters should use GAction::target to pass the values
+     *       instead of GAction::activated(). We can implement reset() only
+     *       by using target
+     *
+     *       This also requires changes to the HUD UI on the shell side.
+     *
+     *       The code below should be updated to actually change the state on each gaction.
+     *       if left uncommented we just generate additional range_action_activated() calls
+     *       without any benefit.
+     */
+#if 0
     PreviewRangeParameter *parameter = qobject_cast<PreviewRangeParameter *>(sender());
     Q_ASSERT(parameter != 0);
     foreach (const ActionData &adata, actionData) {
@@ -1112,6 +1127,7 @@ ActionManager::Private::previewRangeParameterValueChanged()
             }
         }
     }
+#endif
 }
 
 void
@@ -1138,7 +1154,6 @@ ActionManager::Private::updateRange(PreviewRangeParameter *range, const ActionDa
     g_menu_item_set_attribute_value(pdata.gmenuitem, "min", g_variant_new_double(range->minimumValue()));
     g_menu_item_set_attribute_value(pdata.gmenuitem, "max", g_variant_new_double(range->maximumValue()));
     g_menu_item_set_attribute_value(pdata.gmenuitem, G_MENU_ATTRIBUTE_LABEL, g_variant_new_string(qPrintable(range->text())));
-    //g_menu_item_set_attribute_value(pdata.gmenuitem, "value", g_variant_new_double(range->value()));
 }
 
 

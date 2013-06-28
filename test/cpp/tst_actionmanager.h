@@ -41,6 +41,8 @@ private slots:
     void actionInMultipleContext();
     void localContextOverridesGlobalContext();
 
+    void previewParameters();
+
     // do this last as it creates a new globalContext in the effort of
     // preventing a crash, but anyway the functionality of the ActionManager
     // is more or less undefined after this.
