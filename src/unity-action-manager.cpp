@@ -257,6 +257,7 @@ ActionManager::ActionManager(QObject *parent)
       d(new Private(this))
 {
     d->activeLocalContext = 0;
+    /*! \todo document me */
     const char *appid = getenv("APP_ID");
     if (appid == 0) {
         qWarning("%s:\n"
@@ -327,6 +328,8 @@ ActionManager::addLocalContext(ActionContext *context)
     d->createContext(context);
     d->updateContext(context);
     emit localContextsChanged();
+
+    /*! \todo if context::active() == true when added, make the context the active one. */
 }
 
 void
@@ -547,12 +550,22 @@ ActionManager::Private::updateContext(ActionContext *context)
     QSet<Action *> currentActions = context->actions();
     QSet<Action *> removedActions = oldActions - currentActions;
 
-     // Make sure the manager knows about all of the actions
     foreach (Action *action, currentActions) {
+        // Make sure the manager knows about all of the actions
         if (!actionData.contains(action)) {
             createAction(action);
             Q_ASSERT(actionData.contains(action));
-            cdata.actions.insert(action); // oldActions still contain the original old ones
+        }
+
+        /* Add the action to the context.
+         * This has to be separate from making sure the action is known to manager
+         * because some other context might have introduced the same action before already.
+         */
+        if (!cdata.actions.contains(action)) {
+            /* oldActions still contain the original old ones
+             * so it's safe to modify cdata.actions here
+             */
+            cdata.actions.insert(action);
         }
     }
 

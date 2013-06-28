@@ -32,7 +32,26 @@ void
 TestActionManager::initTestCase()
 {
     manager = new ActionManager(this);
+    dbusc = g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, NULL);
+    action_group = g_dbus_action_group_get(dbusc,
+                                           g_dbus_connection_get_unique_name(dbusc),
+                                           "/com/canonical/unity/actions");
 }
+
+void
+TestActionManager::cleanupTestCase()
+{
+    g_clear_object(&action_group);
+}
+
+void
+TestActionManager::cleanup()
+{
+    // after each test make sure the manager is left in a clean state
+    Q_ASSERT(manager->actions().isEmpty());
+    Q_ASSERT(manager->localContexts().isEmpty());
+}
+
 
 void
 TestActionManager::testGlobalContext()
@@ -143,14 +162,7 @@ TestActionManager::actionPropertyChanges()
     Action *action5 = new Action(manager);
     Action *action6 = new Action(manager);
 
-    GDBusConnection *dbusc = g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, NULL);
-    const gchar *my_name = g_dbus_connection_get_unique_name(dbusc);
-    GDBusActionGroup *action_group = g_dbus_action_group_get(dbusc,
-                                                             my_name,
-                                                             "/com/canonical/unity/actions");
-
     QList<QVariant> arguments;
-
 
     manager->globalContext()->addAction(action1);
     manager->globalContext()->addAction(action2);
@@ -235,8 +247,6 @@ TestActionManager::actionPropertyChanges()
     manager->removeLocalContext(ctx2);
     manager->removeAction(action1);
     manager->removeAction(action2);
-
-    g_clear_object(&action_group);
 }
 
 void
@@ -350,3 +360,145 @@ TestActionManager::deletedAction()
 
 }
 
+void
+TestActionManager::actionInMultipleContext()
+{
+    /* If Action is added to multiple contexts
+     * the manager has to be aware of the action
+     * as long as it's part of any of the contexts.
+     */
+
+    ActionContext *gctx = manager->globalContext();
+    ActionContext *ctx1 = new ActionContext(manager);
+    ActionContext *ctx2 = new ActionContext(manager);
+
+    Action *action1 = new Action(manager);
+    Action *action2 = new Action(manager);
+    Action *action3 = new Action(manager);
+
+    QSignalSpy spy(manager, SIGNAL(actionsChanged()));
+
+    gctx->addAction(action1);
+
+    ctx1->addAction(action1);
+    ctx1->addAction(action2);
+
+    ctx2->addAction(action1);
+    ctx2->addAction(action3);
+
+    manager->addLocalContext(ctx1);
+    manager->addLocalContext(ctx2);
+
+    // 3 actions have been added in total
+    QCOMPARE(spy.count(), 3);
+    QCOMPARE(manager->actions().count(), 3);
+
+    spy.clear();
+    gctx->removeAction(action1);
+    QCOMPARE(spy.count(), 0);
+    QCOMPARE(manager->actions().count(), 3);
+    QVERIFY(manager->actions().contains(action1));
+
+    ctx1->removeAction(action1);
+    QCOMPARE(spy.count(), 0);
+    QCOMPARE(manager->actions().count(), 3);
+    QVERIFY(manager->actions().contains(action1));
+
+    // remove the action from the last context
+    ctx2->removeAction(action1);
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(manager->actions().count(), 2);
+    QVERIFY(!manager->actions().contains(action1));
+
+    manager->removeLocalContext(ctx1);
+    manager->removeLocalContext(ctx2);
+}
+
+void
+TestActionManager::localContextOverridesGlobalContext()
+{
+    /* If local context defines an action with the same
+     * name with an action in the global context the
+     * local context action must override the global
+     * one.
+     */
+
+    ActionContext *gctx = manager->globalContext();
+    ActionContext *ctx1 = new ActionContext(manager);
+    ActionContext *ctx2 = new ActionContext(manager);
+
+    Action *action1 = new Action(manager);
+    Action *action2 = new Action(manager);
+    Action *action3 = new Action(manager);
+
+    QSignalSpy spy1(action1, SIGNAL(triggered(QVariant)));
+    QSignalSpy spy2(action2, SIGNAL(triggered(QVariant)));
+    QSignalSpy spy3(action3, SIGNAL(triggered(QVariant)));
+
+    action1->setName("MyAction");
+    action2->setName("MyAction");
+    action3->setName("MyAction");
+
+    ctx1->addAction(action2);
+    ctx2->addAction(action3);
+
+    gctx->addAction(action1);
+    manager->addLocalContext(ctx1);
+    manager->addLocalContext(ctx2);
+
+
+    /* no local context has been activated.
+     * triggering Myaction must now trigger action1
+     */
+    QTest::qWait(100);
+    g_action_group_activate_action(G_ACTION_GROUP(action_group), "MyAction", NULL);
+    spy1.wait();
+    QCOMPARE(spy1.count(), 1);
+    QCOMPARE(spy2.count(), 0);
+    QCOMPARE(spy3.count(), 0);
+    spy1.clear();
+
+
+    ctx1->setActive(true);
+    /* ctx1 is the active one.
+     * triggering Myaction must now trigger action2
+     */
+    QTest::qWait(100);
+    g_action_group_activate_action(G_ACTION_GROUP(action_group), "MyAction", NULL);
+    spy2.wait();
+    QCOMPARE(spy1.count(), 0);
+    QCOMPARE(spy2.count(), 1);
+    QCOMPARE(spy3.count(), 0);
+    spy2.clear();
+
+
+    ctx2->setActive(true);
+    /* ctx2 is the active one.
+     * triggering Myaction must now trigger action3
+     */
+    QTest::qWait(100);
+    g_action_group_activate_action(G_ACTION_GROUP(action_group), "MyAction", NULL);
+    spy3.wait();
+    QCOMPARE(spy1.count(), 0);
+    QCOMPARE(spy2.count(), 0);
+    QCOMPARE(spy3.count(), 1);
+    spy3.clear();
+
+
+    manager->removeLocalContext(ctx2);
+    /* removed the current active context.
+     * triggering Myaction must now trigger action1 again from global context
+     */
+    QTest::qWait(100);
+    g_action_group_activate_action(G_ACTION_GROUP(action_group), "MyAction", NULL);
+    spy1.wait();
+    QCOMPARE(spy1.count(), 1);
+    QCOMPARE(spy2.count(), 0);
+    QCOMPARE(spy3.count(), 0);
+    spy1.clear();
+
+
+    gctx->removeAction(action1);
+    manager->removeLocalContext(ctx1);
+
+}
