@@ -276,6 +276,8 @@ ActionManager::ActionManager(QObject *parent)
 
     d->createContext(d->globalContext);
     d->updateContext(d->globalContext);
+    hud_manager_switch_window_context(d->hudManager,
+                                      d->contextData[d->globalContext].publisher);
 
     d->exportId    = g_dbus_connection_export_action_group(g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, NULL),
                                                            UNITY_ACTION_EXPORT_PATH,
@@ -793,7 +795,7 @@ ActionManager::Private::destroyAction(Action *action)
 
 void ActionManager::Private::createActionData(Action *action, ActionData &adata)
 {
-    const GVariantType *paramType;
+    const GVariantType *paramType = NULL;
     switch(action->parameterType()) {
     case Action::None:
         paramType = NULL;
