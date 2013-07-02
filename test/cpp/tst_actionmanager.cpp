@@ -103,6 +103,7 @@ TestActionManager::contextOperations()
     ActionContext *gctx = manager->globalContext();
     ActionContext *ctx1 = new ActionContext(manager);
     ActionContext *ctx2 = new ActionContext(manager);
+    ActionContext *ctx3 = new ActionContext(manager);
 
     Action *action1 = new Action(manager);
     Action *action2 = new Action(manager);
@@ -142,6 +143,15 @@ TestActionManager::contextOperations()
     ctx1->setActive(true);
     QVERIFY(!ctx2->active());
 
+    // if new context is added and it's active
+    // make it the active local one in the manager.
+    ctx3->setActive(true);
+    manager->addLocalContext(ctx3);
+    QVERIFY(!ctx1->active());
+    QVERIFY(!ctx2->active());
+    QVERIFY(ctx3->active());
+
+
     /*! \todo verify actions from the bus */
     gctx->removeAction(action1);
     gctx->addAction(action1);
@@ -149,6 +159,7 @@ TestActionManager::contextOperations()
     gctx->removeAction(action1);
     manager->removeLocalContext(ctx1);
     manager->removeLocalContext(ctx2);
+    manager->removeLocalContext(ctx3);
     QVERIFY(manager->actions().count() == 0);
 }
 

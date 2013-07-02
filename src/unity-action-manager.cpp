@@ -198,6 +198,7 @@ public:
                           QSet<Action *> oldActions);
     // updates the exported action group.
     void updateActionGroup();
+    void setActiveContext(ActionContext *context);
 
     /* Action */
     void createAction(Action *action);
@@ -331,7 +332,9 @@ ActionManager::addLocalContext(ActionContext *context)
     d->updateContext(context);
     emit localContextsChanged();
 
-    /*! \todo if context::active() == true when added, make the context the active one. */
+    if (context->active()) {
+        d->setActiveContext(context);
+    }
 }
 
 void
@@ -427,6 +430,36 @@ ActionManager::Private::contextActionsChanged()
 }
 
 void
+ActionManager::Private::setActiveContext(ActionContext *context)
+{
+    if (context == globalContext) {
+        // global context is always active.
+        return;
+    }
+    if (!context->active()) {
+        // activate the context
+        context->setActive(true);
+    }
+    if (activeLocalContext == 0) {
+        activeLocalContext = context;
+        updateActionGroup();
+        hud_manager_switch_window_context(hudManager,
+                                          contextData[context].publisher);
+    } else if (activeLocalContext == context) {
+        // already active one.
+        return;
+    } else {
+        // deactivate the old active one.
+        ActionContext *old = activeLocalContext;
+        activeLocalContext = context;
+        old->setActive(false);
+        updateActionGroup();
+        hud_manager_switch_window_context(hudManager,
+                                          contextData[context].publisher);
+    }
+}
+
+void
 ActionManager::Private::contextActiveChanged(bool value)
 {
     ActionContext *context = qobject_cast<ActionContext *>(sender());
@@ -440,23 +473,7 @@ ActionManager::Private::contextActiveChanged(bool value)
     }
 
     if (value == true) {
-        if (activeLocalContext == 0) {
-            activeLocalContext = context;
-            updateActionGroup();
-            hud_manager_switch_window_context(hudManager,
-                                              contextData[context].publisher);
-        } else if (activeLocalContext == context) {
-            // already active one.
-            return;
-        } else {
-            // deactivate the old active one.
-            ActionContext *old = activeLocalContext;
-            activeLocalContext = context;
-            old->setActive(false);
-            updateActionGroup();
-            hud_manager_switch_window_context(hudManager,
-                                              contextData[context].publisher);
-        }
+        setActiveContext(context);
     } else {
         if (activeLocalContext == context) {
             // the active context was deactivated
