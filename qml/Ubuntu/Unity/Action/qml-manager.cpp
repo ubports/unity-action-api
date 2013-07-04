@@ -14,9 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <qml-manager.h>
-
-#include <QDebug>
+#include "qml-manager.h"
 
 using namespace unity::action;
 

@@ -14,6 +14,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef UNITY_ACTION_QML_ACTION_MANAGER
+#define UNITY_ACTION_QML_ACTION_MANAGER
+
 #include <QQmlListProperty>
 #include <unity/action/ActionManager>
 #include <unity/action/Action>
@@ -56,6 +59,7 @@ private:
     static void actionClear(QQmlListProperty<Action> *list);
     static int actionCount(QQmlListProperty<Action> *list);
 };
+#endif
 
 
 
