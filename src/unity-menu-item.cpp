@@ -83,12 +83,11 @@ MenuItem::setAction(Action *value)
     if (d->action == value)
         return;
 
-    if (value == 0) {
+    if (d->action)
         d->action->disconnect(d.data());
-    } else {
-        d->action->disconnect(d.data());
+    if (value != 0)
         connect(value, SIGNAL(destroyed(QObject*)), d.data(), SLOT(actionDestroyed(QObject *)));
-    }
+
     d->action = value;
     emit actionChanged();
 }
