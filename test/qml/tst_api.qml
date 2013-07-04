@@ -26,45 +26,60 @@ import QtTest 1.0
  */
 Item {
 
-    Action {
-        id: globalaction
-        name: "NewMessage"
-        text: "Write New Message"
-        iconName: "email-new-message"
-        description: "Write a new Message"
-        keywords: "Compose;Send"
-        enabled: true
-        parameterType: Action.String
-        onTriggered: {}
+    ActionManager {
+        id: manager
+
+        localContexts: [ctx1, ctx2]
+
+        Action {
+            id: globalaction
+            name: "NewMessage"
+            text: "Write New Message"
+            iconName: "email-new-message"
+            description: "Write a new Message"
+            keywords: "Compose;Send"
+            enabled: true
+            parameterType: Action.String
+            onTriggered: {}
+        }
     }
 
-    Action {
-        id: myaction1
-        text: "Foo"
-        onTriggered: {}
+    ActionContext {
+        id: ctx1
+
+        Action {
+            id: myaction1
+            text: "Foo"
+            onTriggered: {}
+        }
     }
 
-    PreviewAction {
-        id: previewaction
-        text: "Color Balance"
-        commitLabel: "Apply"
+    ActionContext {
+        id: ctx2
 
-        onStarted: {}
-        onResetted: {}
-        onCancelled: {}
-        onTriggered: {}
+        PreviewAction {
+            id: previewaction
+            text: "Color Balance"
+            commitLabel: "Apply"
+
+            onStarted: {}
+            onResetted: {}
+            onCancelled: {}
+            onTriggered: {}
+
+            PreviewRangeParameter {
+                text: "lorem ipsum"
+                value: 0
+                minimumValue: -100
+                maximumValue: 100
+                onValueChanged: {}
+            }
+        }
     }
 
-    PreviewRangeParameter {
-        text: "lorem ipsum"
-        value: 0
-        minimumValue: -100
-        maximumValue: 100
-        onValueChanged: {}
-    }
 
     MenuItem {
-        action: myaction
+        action: myaction1
         text: "New Message"
         iconName: "menu-new-message"
         target: "user@corporation.tld"
@@ -72,28 +87,7 @@ Item {
         enabled: false
     }
 
-    ActionManager {
-        id: manager
-
-    }
-
-    ActionContext {
-        id: ctx1
-    }
-
-    ActionContext {
-        id: ctx2
-    }
-
     Component.onCompleted: {
-        manager.globalContext.actions = [globalaction];
-        manager.globalContext.addLocalContext(ctx1);
-        manager.globalContext.addLocalContext(ctx2);
-
-        ctx1.addAction(myaction1)
-        ctx2.addAction(myaction1)
-        ctx2.addAction(previewaction)
-
         ctx2.active = true
     }
 

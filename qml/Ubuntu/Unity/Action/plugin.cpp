@@ -18,29 +18,35 @@
 
 #include <QtQml>
 
-#include <unity/action/Action>
-#include <unity/action/PreviewAction>
+#include "qml-action.h"
+#include "qml-preview-action.h"
+#include "qml-context.h"
+#include "qml-manager.h"
+
 #include <unity/action/PreviewParameter>
 #include <unity/action/PreviewRangeParameter>
 #include <unity/action/MenuItem>
-#include <unity/action/ActionContext>
-#include <unity/action/ActionManager>
 
 void
 UnityActionQmlPlugin::registerTypes(const char *uri)
 {
     // @uri Ubuntu.Unity.Action
 
-  qmlRegisterType<unity::action::Action>                (uri, 1, 0, "Action");
-  qmlRegisterType<unity::action::PreviewAction>         (uri, 1, 0, "PreviewAction");
+    qmlRegisterType<unity::action::Action>                     ();
+    qmlRegisterType<unity::action::qml::Action>                (uri, 1, 0, "Action");
+    qmlRegisterType<unity::action::PreviewAction>              ();
+    qmlRegisterType<unity::action::qml::PreviewAction>         (uri, 1, 0, "PreviewAction");
 
-  qmlRegisterInterface<unity::action::PreviewParameter> ("PreviewParameter");
-  qmlRegisterType<unity::action::PreviewRangeParameter> (uri, 1, 0, "PreviewRangeParameter");
+    qmlRegisterType<unity::action::PreviewParameter>      ();
+    qmlRegisterType<unity::action::PreviewRangeParameter> (uri, 1, 0, "PreviewRangeParameter");
 
-  qmlRegisterType<unity::action::MenuItem> (uri, 1, 0, "MenuItem");
+    qmlRegisterType<unity::action::MenuItem> (uri, 1, 0, "MenuItem");
 
-  qmlRegisterType<unity::action::ActionContext> (uri, 1, 0, "ActionContext");
-  qmlRegisterType<unity::action::ActionManager> (uri, 1, 0, "ActionManager");
+    qmlRegisterType<unity::action::ActionContext>      ();
+    qmlRegisterType<unity::action::qml::ActionContext> (uri, 1, 0, "ActionContext");
+    qmlRegisterType<unity::action::ActionManager>      ();
+    qmlRegisterType<unity::action::qml::ActionManager> (uri, 1, 0, "ActionManager");
+
 }
 
 void

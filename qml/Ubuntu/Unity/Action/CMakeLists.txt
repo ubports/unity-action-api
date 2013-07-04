@@ -1,5 +1,9 @@
 set(CORE_SRCS
     plugin.cpp
+    qml-action.cpp
+    qml-preview-action.cpp
+    qml-manager.cpp
+    qml-context.cpp
 )
 
 # Build everything twice. Since we have only a few
