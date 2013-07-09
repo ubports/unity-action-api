@@ -35,15 +35,23 @@ void
 TestActionManager::initTestCase()
 {
     manager = new ActionManager(this);
+    dbusc = 0;
+    action_group = 0;
+
     dbusc = g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, NULL);
-    action_group = g_dbus_action_group_get(dbusc,
-                                           g_dbus_connection_get_unique_name(dbusc),
-                                           "/com/canonical/unity/actions");
+    QVERIFY2(dbusc != 0, "Could not get session bus.");
+    if (dbusc) {
+        action_group = g_dbus_action_group_get(dbusc,
+                                               g_dbus_connection_get_unique_name(dbusc),
+                                               "/com/canonical/unity/actions");
+        QVERIFY2(action_group != 0, "Could not get action group");
+    }
 }
 
 void
 TestActionManager::cleanupTestCase()
 {
+    g_clear_object(&dbusc);
     g_clear_object(&action_group);
 }
 

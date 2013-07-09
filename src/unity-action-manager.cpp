@@ -179,6 +179,8 @@ public:
     GSimpleActionGroup *actionGroup;
     guint exportId;
 
+    GDBusConnection *sessionBus;
+
     Private(ActionManager *mgr)
         : q(mgr)
     {
@@ -258,6 +260,19 @@ ActionManager::ActionManager(QObject *parent)
       d(new Private(this))
 {
     d->activeLocalContext = 0;
+
+    GError *error = NULL;
+    d->sessionBus = g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, &error);
+    if (error != NULL) {
+        qWarning("%s:\n"
+                 "\tCould not get session bus. Actions will not be available through D-Bus.\n"
+                 "\tReason: %s",
+                 __PRETTY_FUNCTION__,
+                 error->message);
+        g_error_free(error);
+        error = NULL;
+    }
+
     /*! \todo document me */
     const char *appid = getenv("APP_ID");
     if (appid == 0) {
@@ -280,19 +295,35 @@ ActionManager::ActionManager(QObject *parent)
     hud_manager_switch_window_context(d->hudManager,
                                       d->contextData[d->globalContext].publisher);
 
-    d->exportId    = g_dbus_connection_export_action_group(g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, NULL),
-                                                           UNITY_ACTION_EXPORT_PATH,
-                                                           G_ACTION_GROUP(d->actionGroup),
-                                                           NULL);
-    /*! \todo maybe deal with this in less fatal way */
-    Q_ASSERT(d->exportId != 0);
+    d->exportId = 0;
+    if (d->sessionBus) {
+        d->exportId = g_dbus_connection_export_action_group(d->sessionBus,
+                                                            UNITY_ACTION_EXPORT_PATH,
+                                                            G_ACTION_GROUP(d->actionGroup),
+                                                            &error);
+        if (d->exportId == 0) {
+            Q_ASSERT(error != NULL);
+            qWarning("%s:\n"
+                     "\tCould not export the main action group. Actions will not be available through D-Bus.\n"
+                     "\tReason: %s",
+                     __PRETTY_FUNCTION__,
+                     error->message);
+            g_error_free(error);
+            error = NULL;
+        }
+    }
 }
 
 ActionManager::~ActionManager()
 {
     d->globalContext->disconnect(d.data());
-    g_dbus_connection_unexport_action_group(g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, NULL),
-                                            d->exportId);
+    if (d->exportId != 0) {
+        Q_ASSERT(d->sessionBus != 0);
+        g_dbus_connection_unexport_action_group(d->sessionBus,
+                                                d->exportId);
+        g_dbus_connection_flush_sync(d->sessionBus, NULL, NULL);
+    }
+    g_clear_object(&d->sessionBus);
 }
 
 void
