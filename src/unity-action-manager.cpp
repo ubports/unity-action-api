@@ -301,7 +301,8 @@ ActionManager::ActionManager(QObject *parent)
                                                             UNITY_ACTION_EXPORT_PATH,
                                                             G_ACTION_GROUP(d->actionGroup),
                                                             &error);
-        if (d->exportId == 0 && error != NULL) {
+        if (d->exportId == 0) {
+            Q_ASSERT(error != NULL);
             qWarning("%s:\n"
                      "\tCould not export the main action group. Actions will not be available through D-Bus.\n"
                      "\tReason: %s",
