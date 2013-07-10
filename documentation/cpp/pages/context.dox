@@ -1,0 +1,178 @@
+/*!
+\page contexts.html contexts
+\title HUD Contexts
+\contentspage {Ubuntu HUD}
+
+\part Overview
+Application which has different views needs to manage it actions based on the currently active view.
+Not all of the actions supported by the application might be relevant or applicable on all of the views.
+
+Therefore HUD has a notion of contexts; context groups actions together and by providing multiple contexts
+the developer is able to control the visibility of the actions based on context.
+
+
+\part Applications with Single Context
+For applications that do not require multiple contexts using the API is straight forward:
+
+\code
+    import QtQuick 2.0
+    import Ubuntu.Components 0.1
+    import Ubuntu.HUD 1.0 as HUD
+
+
+    MainView {
+        width: units.gu(48)
+        height: units.gu(60)
+
+        HUD.HUD {
+            applicationIdentifier: "my_app" // must match the .desktop file name
+            HUD.Context {
+                HUD.Action {
+                    label: "My Action 1"
+                }
+                HUD.Action {
+                    label: "My Action 2"
+                }
+                HUD.Action {
+                    label: "My Action 3"
+                }
+            }
+        }
+    }
+\endcode
+
+\part Applications with Multiple Contexts
+Multiple contexts must be managed by the developer.
+
+\code
+    import QtQuick 2.0
+    import Ubuntu.Components 0.1
+    import Ubuntu.HUD 1.0 as HUD
+
+
+    MainView {
+        width: units.gu(48)
+        height: units.gu(60)
+
+        // HUD.HUD is application wide
+        HUD.HUD {
+            id:hud
+            applicationIdentifier: "my_app" // must match the .desktop file name
+            contexts: [ctx0, ctx1] // Add both contexts to the HUD
+        }
+
+        PageStack {
+            id: pageStack
+            Component.onCompleted: push(page0)
+
+            Page {
+                // Actions that are available for this page
+                HUD.Context {
+                    id: ctx0
+                    HUD.Action {
+                        label: i18n.tr("My Action 1")
+                    }
+                }
+
+                id: page0
+                title: i18n.tr("Root page")
+                visible: false
+            }
+
+            Page {
+                // Actions that are available for this page
+                HUD.Context {
+                    id: ctx1
+
+                    HUD.Action {
+                        label: i18n.tr("My Action 2")
+                    }
+                }
+                title: "Rectangle"
+                id: page1
+                visible: false
+            }
+
+            onCurrentPageChanged: {
+                // When using multiple contexts they have to be managed manually
+                if (currentPage === page0) {
+                    hud.setActiveContext(ctx0)
+                } else if (currentPage === page1) {
+                    hud.setActiveContext(ctx1)
+                }
+            }
+        }
+    }
+\endcode
+
+\part Sharing Actions between Contexts
+If some actions are shared between Contexts the actions must be declared outside of any of the contexts and
+be added by their id's.
+
+\code
+    import QtQuick 2.0
+    import Ubuntu.Components 0.1
+    import Ubuntu.HUD 1.0 as HUD
+
+
+    MainView {
+        width: units.gu(48)
+        height: units.gu(60)
+
+        HUD.HUD {
+            id:hud
+            applicationIdentifier: "my_app" // must match the .desktop file name
+            contexts: [ctx0, ctx1]
+        }
+
+        HUD.SettingsAction {
+            id: settingsAction
+
+            // display settings
+            onTriggered: {}
+        }
+
+        PageStack {
+            id: pageStack
+            Component.onCompleted: push(page0)
+
+            Page {
+                HUD.Action {
+                    id: action1
+                    label: i18n.tr("My Action 1")
+                }
+                HUD.Context {
+                    id: ctx0
+                    actions: [settingsAction, action1]
+                }
+
+                id: page0
+                title: i18n.tr("Root page")
+                visible: false
+            }
+
+            Page {
+                HUD.Action {
+                    id: action2
+                    label: i18n.tr("My Action 2")
+                }
+                HUD.Context {
+                    id: ctx1
+                    actions: [settingsAction, action2]
+                }
+                title: "Rectangle"
+                id: page1
+                visible: false
+            }
+
+            onCurrentPageChanged: {
+                if (currentPage === page0) {
+                    hud.setActiveContext(ctx0)
+                } else if (currentPage === page1) {
+                    hud.setActiveContext(ctx1)
+                }
+            }
+        }
+    }
+\endcode
+*/
