@@ -1,79 +1,62 @@
 /*!
-\page page_preview-actions.html
-\title Parameterized Actions
-\contentspage {Ubuntu HUD}
+\page page_preview-actions Preview Actions
 
-\image html hud_parameters.jpg "Color Balance action with four slider parameteres"
+The preview action is an action that allows the application to generate a preview of the action before
+the action is applied. The preview is controlled by the HUD UI.
 
-\code
-    import QtQuick 2.0
-    import Ubuntu.Components 0.1
-    import Ubuntu.HUD 1.0 as HUD
+PreviewActions contain one or more parameters which form the preview parameters of the action.
 
+The PreviewAction has additional extra requirements compared to other Actions:
+- It can have multiple parameters whose values can be seen and changed over the bus
+- The parameters’ ordering can be specified by client code
+- It adds new signals to control the preview mode: started, cancelled, resetted
 
-    MainView {
-        width: units.gu(48)
-        height: units.gu(60)
+The ordering of the parameters is specified by the order in which the actions are defined in the parameters list.
 
-        HUD.HUD {
-            applicationIdentifier: "my_app" // must match the .desktop file name
-            HUD.Context {
-                HUD.Action {
-                    label: i18n.tr("My Action 1")
-                }
-                HUD.Action {
-                    label: i18n.tr("Color Balance")
-                    HUD.SliderParameter {
-                        label: i18n.tr("Brightness")
+PreviewAction does not have a value of it’s own. Instead the values of the parameters provide the information
+on which the preview is generated.
 
-                        minimumValue: 0.0
-                        maximumValue: 100.0
-                        value: 0.0
-                        live: true
+\image html hud_parameters.jpg "HUD UI showing Color Balance action with four slider parameters"
 
-                        // gets the values from the HUD UI when user interacts with the slider
-                        // update the preview
-                        onValueChanged: {}
-                    }
-                    HUD.SliderParameter {
-                        label: i18n.tr("Contrast")
+\section sec_control_signals Control Signals
+Diagram describing when the different signals are emitted:
+\image html preview_action_signals.png "Preview Action Signals"
 
-                        minimumValue: 0.0
-                        maximumValue: 100.0
-                        value: 0.0
-                        live: true
+<i>started</i> signal informs the application that it must set up a preview view and start updating the
+preview based on the values of the defined preview parameters.
 
-                        // gets the values from the HUD UI when user interacts with the slider
-                        // update the preview
-                        onValueChanged: {}
-                    }
+<i>resetted</i> signal informs the application that it has to reset the parameter values to their original values.
 
-                    // action was activated in the HUD UI.
-                    // do the necessary initialization and start providing preview
-                    // based on the values of the parameters.
-                    onStarted: {}
+<i>cancelled</i> signal informs the application that the user cancelled the PreviewAction. At this point the application
+must return the the state it was in at the time the <i>started()</i> signal was triggered without applying any changes.
 
-                    // reset the parameter values
-                    onResetted: {}
+<i>triggered</i> signal informs the application the user wants the changes to be applied.
 
-                    // action was cancelled
-                    onCancelled: {}
+\section sec_example Example
 
-                    // action was completed.
-                    // apply the action with the values of the parameters
-                    onTriggered: {}
-                }
-            }
-        }
+This example shows how to create a PreviewAction with a single range parameter.
 
-        Page {
-            title: "Example page"
+First a PreviewAction is created and set up:
+\snippet preview-action/preview-action.cpp create previewaction
 
-            Label {
-                anchors.centerIn: parent
-                text: "Hello world!"
-            }
-        }
-    }
-\endcode
+Then a PreviewRangeParameter:
+\snippet preview-action/preview-action.cpp create rangeparameter
+
+After all the parameters have been created they are added to the PreviewAction:
+\snippet preview-action/preview-action.cpp set previewaction parameters
+
+And finally the PreviewAction is added to the ActionManager:
+\snippet preview-action/preview-action.cpp add to manager
+
+Then hooking up the control signals:
+\snippet preview-action/preview-action.cpp connect previewaction signals
+
+And not forgetting the parameter value updates:
+\snippet preview-action/preview-action.cpp connect parameter signals
+
+---
+
+The complete example:
+\include examples/preview-action/preview-action.cpp
+
 */

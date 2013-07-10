@@ -9,7 +9,7 @@ Unity Action API offers a way to easily integrate with the Unity components outs
 
 Applications have internally different types of actions with different life-cycles. Some actions are application wide that are relevant and
 available throughout the whole life-cycle of the application. Other actions are context specific and only available when the application is in
-certain visual state, such as in image editing mode.
+certain visual state, such as in image editing mode. See \ref page_contexts "Action Contexts" for more details.
 
 Application can define application wide actions dynamically during runtime and as offline (jumplist) actions that are available even if the
 application is not running. Activating an offline action will launch the application when necessary.
