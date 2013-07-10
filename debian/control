@@ -16,7 +16,9 @@ Build-Depends:
  qtdeclarative5-dev-tools,
  qtdeclarative5-qtquick2-plugin,
  qtdeclarative5-test-plugin,
- dbus-test-runner
+ dbus-test-runner,
+ doxygen,
+ graphviz
 Standards-Version: 3.9.2
 Homepage: https://launchpad.net/unity-action-api
 Vcs-Bzr: lp:unity-action-api

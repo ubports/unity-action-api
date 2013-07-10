@@ -1,0 +1,9 @@
+/*!
+\page page_platform-integartion Platform Integration
+
+One of the key benefits of Unity Action API is that it allows seamless integration with the Unity HUD; All Unity Actions are available to
+the HUD once they have been added to the ActionManager.
+
+\image html images/hud_screenshot.jpg "The HUD showing some actions."
+
+*/

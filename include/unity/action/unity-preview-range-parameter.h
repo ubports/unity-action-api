@@ -25,6 +25,9 @@ namespace action {
 }
 }
 
+/*!
+ * \brief Provides a range preview parameter
+ */
 class Q_DECL_EXPORT unity::action::PreviewRangeParameter : public unity::action::PreviewParameter
 {
     Q_OBJECT

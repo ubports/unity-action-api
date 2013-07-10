@@ -1,10 +1,9 @@
 /*!
-\page parameterized-actions.html parameterized-actions
+\page page_preview-actions.html
 \title Parameterized Actions
 \contentspage {Ubuntu HUD}
 
-\image hud_parameters.jpg
-\caption Color Balance action with four slider parameteres
+\image html hud_parameters.jpg "Color Balance action with four slider parameteres"
 
 \code
     import QtQuick 2.0
