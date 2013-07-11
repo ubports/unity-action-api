@@ -150,7 +150,9 @@ struct Q_DECL_HIDDEN ActionData
         g_clear_object(&paramMenu);
     }
 };
+
 // needed for QHash.key()
+//! \private
 bool operator== (const ActionData &a, const ActionData &b) {
     // comparing these pointers is enough
     return a.gaction == b.gaction &&

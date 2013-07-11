@@ -30,7 +30,7 @@ namespace action {
  * \brief
  *
  * even though PreviewAction is subclass of Action not all of the properties
- * of Action base class are supported. unity::action::Action::parameterType must be unity::action::Action::None
+ * of Action base class are supported. Action::parameterType() must be unity::action::Action::None
  *
  * For more details see \ref page_preview-actions
  */

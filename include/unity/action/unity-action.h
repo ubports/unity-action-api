@@ -27,44 +27,6 @@ namespace action {
 #include <QVariant>
 #include <QScopedPointer>
 
-/*!
- * \class unity::action::Action
- * \brief
- *
- * The most basic type of action is the Action class. Unity services visualizing this class will usually
- * be represented it as a simple button or menu item, depending upon where it is contributed.
- *
- * The optional name property is available through D-Bus and can be used to activate a specific Action
- * from the Launcher (quicklist actions defined in .desktop file) for example. As the name is available
- * on the bus it can also later be used for IPC between applications.
- *
- * All of the more specific action classes discussed below derive from the base Action class,
- * inheriting its basic behaviour.
- *
- * If the parameterType property is set, the Action is said to be parameterised. This means that when it is
- * bound to a menu or button, the action expects a typed input parameter. When invoked by a user,
- * the action will prompt for input. When invoked programmatically, over DBus for example,
- * the parameter will be provided at that point.
- *
-The Action defines an ActionTypes enum in C++, which is then exposed to QML:
-
-enum ActionTypes {
-    String,
-    Integer,
-    Boolean,
-    Real,
-...
-}
-
-To define, for example,  an Action with a string parameter:
-
-Action {
-    name: “foo”
-    parameterType: ActionTypes.String
-}
-
-*/
-
 class Q_DECL_EXPORT unity::action::Action : public QObject
 {
     Q_OBJECT
@@ -99,62 +61,58 @@ class Q_DECL_EXPORT unity::action::Action : public QObject
                READ parameterType
                WRITE setParameterType
                NOTIFY parameterTypeChanged)
+
 public:
-        enum Type {
-            None,
-            String,
-            Integer,
-            Bool,
-            Real
-        };
 
-        explicit Action(QObject *parent = 0);
-        virtual ~Action();
+    enum Type {
+        None,
+        String,
+        Integer,
+        Bool,
+        Real
+    };
 
-        QString name() const;
+    explicit Action(QObject *parent = 0);
+    virtual ~Action();
 
-        /*! potentially an expensive operation */
-        void setName(const QString &value);
+    QString name() const;
+    void setName(const QString &value);
 
-        QString text() const;
-        void setText(const QString &value);
+    QString text() const;
+    void setText(const QString &value);
 
-        QString iconName() const;
-        void setIconName(const QString &value);
+    QString iconName() const;
+    void setIconName(const QString &value);
 
-        QString description() const;
-        void setDescription(const QString &value);
+    QString description() const;
+    void setDescription(const QString &value);
 
-        QString keywords() const;
-        void setKeywords(const QString &value);
+    QString keywords() const;
+    void setKeywords(const QString &value);
 
-        bool enabled() const;
-        void setEnabled(bool value);
+    bool enabled() const;
+    void setEnabled(bool value);
 
-        Type parameterType() const;
-
-        /*! potentially an expensive operation */
-        void setParameterType(Type value);
+    Type parameterType() const;
+    void setParameterType(Type value);
 
 public slots:
-        // checks the value agains parameterType
-        void trigger(QVariant value = QVariant());
+    void trigger(QVariant value = QVariant());
 
 signals:
-        void nameChanged(const QString &value);
-        void textChanged(const QString &value);
-        void iconNameChanged(const QString &value);
-        void descriptionChanged(const QString &value);
-        void keywordsChanged(const QString &value);
-        void enabledChanged(bool value);
-        void parameterTypeChanged(unity::action::Action::Type value);
+    void nameChanged(const QString &value);
+    void textChanged(const QString &value);
+    void iconNameChanged(const QString &value);
+    void descriptionChanged(const QString &value);
+    void keywordsChanged(const QString &value);
+    void enabledChanged(bool value);
+    void parameterTypeChanged(unity::action::Action::Type value);
 
-
-        void triggered(QVariant value);
+    void triggered(QVariant value);
 
 private:
-        class Private;
-        QScopedPointer<Private> d;
+    class Private;
+    QScopedPointer<Private> d;
 };
 Q_DECLARE_METATYPE(unity::action::Action::Type)
 #endif
