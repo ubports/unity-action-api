@@ -43,9 +43,6 @@ public:
     explicit ActionContext(QObject *parent = 0);
     virtual ~ActionContext();
 
-    /*! \todo maybe call this includeAction() to emphasize
-     *        that actions have to be added to the manager
-     */
     Q_INVOKABLE void addAction(unity::action::Action *action);
     Q_INVOKABLE void removeAction(unity::action::Action *action);
 
