@@ -17,6 +17,17 @@
 #include <unity/action/PreviewParameter>
 using namespace unity::action;
 
+namespace unity {
+namespace action {
+/*!
+ * \class PreviewParameter
+ * Base class for all the parameter classes.
+ * See the subclasses.
+ */
+}
+}
+
+
 //! \private
 class Q_DECL_HIDDEN unity::action::PreviewParameter::Private {
 public:

@@ -18,6 +18,82 @@
 #include <unity/action/PreviewParameter>
 using namespace unity::action;
 
+
+namespace unity {
+namespace action {
+/*!
+ * \class PreviewAction
+ * \brief previewable action
+ *
+ * The preview action is an action that allows the application to
+ * generate a preview of the action before the action is applied.
+ * The preview is controlled by the HUD UI.
+ *
+ * PreviewActions contain one or more parameters which form the preview
+ * parameters of the action.
+ *
+ * For more details see \ref page_preview-actions
+ *
+ * \note Even though PreviewAction is subclass of Action not all of the properties
+ * of Action base class are supported.
+ *
+ * \note Action::parameterType must be Action::None
+ */
+
+// properties
+
+/*!
+ * \property QString PreviewAction::commitLabel
+ *
+ * User visible label shown in the HUD parameter view.
+ *
+ * This is the label shown in the HUD UI on the button that applies or commits the action
+ * after the user is happy with the parameters.
+ *
+ * If set to empty string the HUD UI will use a default commit label.
+ *
+ * \initvalue ""
+ *
+ * \accessors commitLabel(), setCommitLabel()
+ *
+ * \notify commitLabelChanged()
+ */
+
+
+// signals
+
+/*!
+ * \fn void PreviewAction::started()
+ *
+ * Signal to inform that a action is selected in the HUD UI.
+ * The application should set the values of the parameters to their initial state.
+ */
+
+/*!
+ * \fn void PreviewAction::cancelled()
+ *
+ * Signal to inform that the user has cancelled the action from the
+ * HUD UI. No modifications should be done on the application and the program should
+ * return to the state it was before the action was first started.
+ */
+
+/*!
+ * \fn void PreviewAction::resetted()
+ *
+ * Signal to inform that the user has clicked the "reset" button from the
+ * HUD UI. The action is still active on the HUD UI but the application
+ * should reset the values of the parameters to the same values they where when the
+ * action was started.
+ */
+
+/*!
+ * \fn void PreviewAction::parametersChanged()
+ *
+ * Notifies that a parameter was either added or removed.
+ */
+}
+}
+
 //! \private
 class Q_DECL_HIDDEN unity::action::PreviewAction::Private : public QObject
 {
@@ -46,6 +122,13 @@ PreviewAction::Private::parameterDestroyed(QObject *obj)
     q->removeParameter(parameter);
 }
 
+/*!
+ * \fn PreviewAction::PreviewAction(QObject *parent = 0)
+ * \param parent parent QObject or 0
+ *
+ * Constructs a new PreviewAction. See the property documentation for
+ * default values.
+ */
 PreviewAction::PreviewAction(QObject *parent)
     : Action(parent),
       d(new Private())
@@ -72,11 +155,28 @@ PreviewAction::setCommitLabel(const QString &value)
     emit commitLabelChanged(value);
 }
 
+/*!
+ * \returns The list of parameters added to the action.
+ */
 QList<PreviewParameter *> PreviewAction::parameters()
 {
     return d->parameters;
 }
 
+/*!
+ * \param parameter parameter to be added
+ *
+ * Adds a parameter.
+ *
+ * Calling this function multiple times with the same parameter
+ * does not have any side effects; the parameter gets added only once.
+ *
+ * PreviewAction monitors if the parameter is deleted and does the appropriate
+ * cleanup when necessary, so it is not mandatory to call removeParameter()
+ * before the action is destroyed.
+ *
+ * \note parameter must not be 0.
+ */
 void
 PreviewAction::addParameter(unity::action::PreviewParameter *parameter)
 {
@@ -90,6 +190,17 @@ PreviewAction::addParameter(unity::action::PreviewParameter *parameter)
     emit parametersChanged();
 }
 
+/*!
+ * \param parameter parameter to be removed
+ *
+ * Remove a parameter.
+ *
+ * Calling this function multiple times with the same parameter
+ * does not have any side effects; the parameter gets removed only if
+ * it was previously added with addParameter().
+ *
+ * \note parameter must not be 0
+ */
 void
 PreviewAction::removeParameter(unity::action::PreviewParameter *parameter)
 {

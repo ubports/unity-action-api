@@ -25,9 +25,6 @@ namespace action {
 }
 }
 
-/*!
- * \brief Provides a range preview parameter
- */
 class Q_DECL_EXPORT unity::action::PreviewRangeParameter : public unity::action::PreviewParameter
 {
     Q_OBJECT
@@ -54,7 +51,6 @@ public:
     explicit PreviewRangeParameter(QObject *parent = 0);
     virtual ~PreviewRangeParameter();
 
-    /*! user visible label of the parameter */
     QString text() const;
     void setText(const QString &value);
 

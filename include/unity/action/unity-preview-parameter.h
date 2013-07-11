@@ -25,9 +25,6 @@ namespace action {
 
 #include <QObject>
 
-/*!
- * \brief This abstract element represents an individual parameter to the PreviewableAction.
- */
 class Q_DECL_EXPORT unity::action::PreviewParameter : public QObject
 {
     Q_OBJECT

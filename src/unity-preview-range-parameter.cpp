@@ -17,6 +17,67 @@
 #include <unity/action/PreviewRangeParameter>
 using namespace unity::action;
 
+namespace unity {
+namespace action {
+/*!
+ * \class PreviewRangeParameter
+ * Provides a range preview parameter.
+ * See \ref page_preview-actions for more details.
+ */
+}
+}
+
+// properties
+
+/*!
+ * \property float PreviewRangeParameter::maximumValue
+ *
+ * The maximum value of the range.
+ *
+ * \initvalue 100.0f
+ *
+ * \accessors maximumValue(), setMaximumValue()
+ *
+ * \notify maximumValueChanged()
+ */
+
+/*!
+ * \property float PreviewRangeParameter::minimumValue
+ *
+ * The minimum value of the range.
+ *
+ * \initvalue 0.0f
+ *
+ * \accessors minimumValue(), setMinimumValue()
+ *
+ * \notify minimumValueChanged()
+ */
+
+/*!
+ * \property QString PreviewRangeParameter::text
+ *
+ * The user visible primary label of the parameter.
+ *
+ * \initvalue ""
+ *
+ * \accessors text(), setText()
+ *
+ * \notify textChanged()
+ */
+
+/*!
+ * \property float PreviewRangeParameter::value
+ *
+ * The current value of the range.
+ *
+ * \initvalue 0.0f
+ *
+ * \accessors value(), setValue()
+ *
+ * \notify valueChanged()
+ */
+
+
 //! \private
 class Q_DECL_HIDDEN unity::action::PreviewRangeParameter::Private {
 public:
@@ -26,6 +87,13 @@ public:
     float max;
 };
 
+/*!
+ * \fn PreviewRangeParameter::PreviewRangeParameter(QObject *parent = 0)
+ * \param parent parent QObject or 0
+ *
+ * Constructs a new PreviewRangeParameter. See the property documentation for
+ * default values.
+ */
 PreviewRangeParameter::PreviewRangeParameter(QObject *parent)
     : PreviewParameter(parent),
       d(new Private())

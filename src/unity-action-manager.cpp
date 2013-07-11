@@ -461,16 +461,10 @@ ActionManager::addLocalContext(ActionContext *context)
  * does not have any side effects; the context gets removed only if
  * it was previously added with addLocalContext().
  *
- * ActionManager monitors if the context is deleted and does the appropriate
- * cleanup when necessary, so it is not mandatory to call removeLocalContext()
- * before the context is destroyed.
- *
  * \note  if the removed context is the current active one
  *         after the removal there is no active local context.
  *
  * \note context must not be 0
- */
-/*!
  */
 void
 ActionManager::removeLocalContext(ActionContext *context)
