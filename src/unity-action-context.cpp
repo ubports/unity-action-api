@@ -152,7 +152,7 @@ ActionContext::addAction(Action *action)
  *
  * Calling this function multiple times with the same action
  * does not have any side effects; the action gets removed only if
- * it was first added to the context with addAction()
+ * it was first added to the context with addAction().
  *
  * \note action must not be 0
  */

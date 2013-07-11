@@ -31,7 +31,7 @@ namespace action {
  * be represented it as a simple button or menu item, depending upon where it is contributed.
  *
  * The optional name property is available through D-Bus and can be used to activate a specific Action
- * from external componenets such as the Launcher. See \ref page_platform-integartion and
+ * from external componenets such as the Launcher. See \ref page_platform-integration and
  * \ref page_offline-actions for more information.
  *
  * If the parameterType property is set, the Action is said to be parameterised. This means that when it is

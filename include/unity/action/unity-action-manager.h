@@ -46,22 +46,12 @@ public:
 
     Q_INVOKABLE unity::action::ActionContext *globalContext();
 
-    /*! if context::active == is true, the context is made the current active one */
     Q_INVOKABLE void addLocalContext(unity::action::ActionContext *context);
 
-    /*! if the removed context is the current active one after the removal
-     *  there is no active context.
-     */
     Q_INVOKABLE void removeLocalContext(unity::action::ActionContext *context);
     QSet<ActionContext *> localContexts() const;
 
-    /*! set of actions the manager is currently aware of.
-     */
     QSet<Action *> actions() const;
-
-    /*! \todo per a feature request we should add setActiveContext(ActionContext *context).
-     *        the context would be added to the manager if it is not already added.
-     */
 
 signals:
     void localContextsChanged();

@@ -29,6 +29,45 @@
 
 using namespace unity::action;
 
+namespace unity {
+namespace action {
+/*!
+ * \class ActionManager
+ *
+ * ActionManager exports the application actions to the external components.
+ * See \ref page_platform-integration and \ref page_contexts for more details.
+ */
+
+// properties
+
+/*!
+ * \property ActionContext *ActionManager::globalContext
+ *
+ * The globalContext of the Application.
+ *
+ * \note Setting the ActionContext::active on the global context has no effect;
+ *
+ * \accessors globalContext()
+ */
+
+// signals
+
+/*!
+ * \fn void ActionManager::localContextsChanged()
+ *
+ * A local context was either added or removed.
+ */
+
+/*!
+ * \fn void ActionManager::actionsChanged()
+ *
+ * An action was either added or removed from the global context
+ * or any of the local contexts the manager is currently tracking.
+ */
+}
+}
+
+
 #define UNITY_ACTION_EXPORT_PATH "/com/canonical/unity/actions"
 
 //! \private
@@ -257,6 +296,13 @@ public slots:
 /*                         PUBLIC API                                   */
 /************************************************************************/
 
+/*!
+ * \param parent parent QObject or 0
+ *
+ * Creates a new ActionManager.
+ *
+ * Also creates a global context which can be accessed with ActionManager::globalContext
+ */
 ActionManager::ActionManager(QObject *parent)
     : QObject(parent),
       d(new Private(this))
@@ -275,7 +321,6 @@ ActionManager::ActionManager(QObject *parent)
         error = NULL;
     }
 
-    /*! \todo document me */
     const char *appid = getenv("APP_ID");
     if (appid == 0) {
         qWarning("%s:\n"
@@ -328,6 +373,16 @@ ActionManager::~ActionManager()
     g_clear_object(&d->sessionBus);
 }
 
+/*!
+ * \param action action to be added
+ *
+ * this is a shorthand for
+ * \code
+ *    manager->globalContext()->addAction(action);
+ * \endcode
+ *
+ * \see ActionContext::addAction()
+ */
 void
 ActionManager::addAction(Action *action)
 {
@@ -336,6 +391,16 @@ ActionManager::addAction(Action *action)
     // globalContext (ActionContext) handles this case for us.
 }
 
+/*!
+ * \param action action to be removed
+ *
+ * this is a shorthand for
+ * \code
+ *    manager->globalContext()->removeAction(action);
+ * \endcode
+ *
+ * \see ActionContext::removeAction()
+ */
 void
 ActionManager::removeAction(Action *action)
 {
@@ -348,6 +413,23 @@ ActionManager::globalContext()
     return d->globalContext;
 }
 
+/*!
+ * \param context context to be added
+ *
+ * Adds a local context.
+ *
+ * Calling this function multiple times with the same context
+ * does not have any side effects; the context gets added only once.
+ *
+ * ActionManager monitors if the context is deleted and does the appropriate
+ * cleanup when necessary, so it is not mandatory to call removeLocalContext()
+ * before the context is destroyed.
+ *
+ * \note If context::active is true when added,
+ *       the context is made the current active one.
+ *
+ * \note context must not be 0.
+ */
 void
 ActionManager::addLocalContext(ActionContext *context)
 {
@@ -370,6 +452,26 @@ ActionManager::addLocalContext(ActionContext *context)
     }
 }
 
+/*!
+ * \param context context to be removed
+ *
+ * Remove a local context.
+ *
+ * Calling this function multiple times with the same context
+ * does not have any side effects; the context gets removed only if
+ * it was previously added with addLocalContext().
+ *
+ * ActionManager monitors if the context is deleted and does the appropriate
+ * cleanup when necessary, so it is not mandatory to call removeLocalContext()
+ * before the context is destroyed.
+ *
+ * \note  if the removed context is the current active one
+ *         after the removal there is no active local context.
+ *
+ * \note context must not be 0
+ */
+/*!
+ */
 void
 ActionManager::removeLocalContext(ActionContext *context)
 {
@@ -389,12 +491,21 @@ ActionManager::removeLocalContext(ActionContext *context)
     emit localContextsChanged();
 }
 
+/*!
+ * \returns The set of local contexts the manager is aware of.
+ */
 QSet<ActionContext *>
 ActionManager::localContexts() const
 {
     return d->localContexts;
 }
 
+/*!
+ * \returns The set of actions the manager is currently aware of.
+ *
+ * If an action is part of multiple contexts it's still only included
+ * once in the set.
+ */
 QSet<Action *>
 ActionManager::actions() const
 {

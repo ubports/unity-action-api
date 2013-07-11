@@ -26,8 +26,11 @@ more details.
 
  - \ref page_contexts "Action Contexts"
  - \ref page_preview-actions "Preview Actions"
- - \ref page_platform-integartion "Platform Integration"
+ - \ref page_platform-integration "Platform Integration"
  - \ref page_offline-actions "Offline Actions"
  - \ref page_future-plans "Future Development Plans"
 
+\section sec_bug_reports Reporting Bugs
+If you find any problems with the or this documentation,
+please file a bug in Unity Action API [Launchpad page](https://bugs.launchpad.net/unity-action-api).
 */

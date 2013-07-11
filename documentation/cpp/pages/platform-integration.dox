@@ -1,5 +1,5 @@
 /*!
-\page page_platform-integartion Platform Integration
+\page page_platform-integration Platform Integration
 
 Unity Action API offers a way for application to integrate with the platform components such as the Unity Launcher and the Unity HUD.
 The ActionManager exports the actions to D-Bus which allows external components and even 3rd party applications to interact with the actions.
