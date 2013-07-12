@@ -132,6 +132,15 @@ TestAction::setEnabled()
     spy.clear();
     action.setEnabled(false);
     QCOMPARE(spy.count(), 0);
+
+    action.setEnabled(true);
+    QSignalSpy trigger_spy(&action, SIGNAL(triggered(QVariant)));
+    action.trigger();
+    QCOMPARE(trigger_spy.count(), 1);
+    trigger_spy.clear();
+    action.setEnabled(false);
+    action.trigger();
+    QCOMPARE(trigger_spy.count(), 0);
 }
 
 void
