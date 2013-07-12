@@ -391,10 +391,25 @@ Action::setParameterType(Type value)
     emit parameterTypeChanged(value);
 }
 
+/*!
+ * Checks the value agains parameterType and triggers the action.
+ *
+ * if paramType is Action::None the action can be triggered by simly calling:
+ * \code
+ *     action->trigger();
+ * \endcode
+ *
+ * \note beware of the automatic conversion QVariant does. See the
+ *       QVariant documentation for details.
+ */
 void
 Action::trigger(QVariant value)
 {
     QMetaType::Type targetType = QMetaType::UnknownType;
+
+    if (!d->enabled) {
+        return;
+    }
 
     switch (d->parameterType) {
     case None: {
