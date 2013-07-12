@@ -1,9 +1,9 @@
 project = Unity Action QML API
-description = The Unity Common Action API
+description = Unity Action API
 
 sourcedirs = @CMAKE_CURRENT_SOURCE_DIR@/pages @CMAKE_CURRENT_SOURCE_DIR@/qml-api
-exampledirs = @CMAKE_CURRENT_SOURCE_DIR@/../examples
-imagedirs = @CMAKE_CURRENT_SOURCE_DIR@/images
+exampledirs = @CMAKE_SOURCE_DIR@/examples/
+imagedirs = @CMAKE_CURRENT_SOURCE_DIR@/../images
 
 sources.fileextensions = "*.qdoc *.qml"
 headers.fileextensions = "*.h"

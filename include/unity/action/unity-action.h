@@ -32,6 +32,7 @@ class Q_DECL_EXPORT unity::action::Action : public QObject
     Q_OBJECT
     Q_DISABLE_COPY(Action)
     Q_ENUMS(Type)
+
     Q_PROPERTY(QString name
                READ name
                WRITE setName
@@ -60,62 +61,58 @@ class Q_DECL_EXPORT unity::action::Action : public QObject
                READ parameterType
                WRITE setParameterType
                NOTIFY parameterTypeChanged)
+
 public:
-        enum Type {
-            None,
-            String,
-            Integer,
-            Bool,
-            Real
-        };
 
-        explicit Action(QObject *parent = 0);
-        virtual ~Action();
+    enum Type {
+        None,
+        String,
+        Integer,
+        Bool,
+        Real
+    };
 
-        QString name() const;
+    explicit Action(QObject *parent = 0);
+    virtual ~Action();
 
-        /*! potentially an expensive operation */
-        void setName(const QString &value);
+    QString name() const;
+    void setName(const QString &value);
 
-        QString text() const;
-        void setText(const QString &value);
+    QString text() const;
+    void setText(const QString &value);
 
-        QString iconName() const;
-        void setIconName(const QString &value);
+    QString iconName() const;
+    void setIconName(const QString &value);
 
-        QString description() const;
-        void setDescription(const QString &value);
+    QString description() const;
+    void setDescription(const QString &value);
 
-        QString keywords() const;
-        void setKeywords(const QString &value);
+    QString keywords() const;
+    void setKeywords(const QString &value);
 
-        bool enabled() const;
-        void setEnabled(bool value);
+    bool enabled() const;
+    void setEnabled(bool value);
 
-        Type parameterType() const;
-
-        /*! potentially an expensive operation */
-        void setParameterType(Type value);
+    Type parameterType() const;
+    void setParameterType(Type value);
 
 public slots:
-        // checks the value agains parameterType
-        void trigger(QVariant value = QVariant());
+    void trigger(QVariant value = QVariant());
 
 signals:
-        void nameChanged(const QString &value);
-        void textChanged(const QString &value);
-        void iconNameChanged(const QString &value);
-        void descriptionChanged(const QString &value);
-        void keywordsChanged(const QString &value);
-        void enabledChanged(bool value);
-        void parameterTypeChanged(unity::action::Action::Type value);
+    void nameChanged(const QString &value);
+    void textChanged(const QString &value);
+    void iconNameChanged(const QString &value);
+    void descriptionChanged(const QString &value);
+    void keywordsChanged(const QString &value);
+    void enabledChanged(bool value);
+    void parameterTypeChanged(unity::action::Action::Type value);
 
-
-        void triggered(QVariant value);
+    void triggered(QVariant value);
 
 private:
-        class Private;
-        QScopedPointer<Private> d;
+    class Private;
+    QScopedPointer<Private> d;
 };
 Q_DECLARE_METATYPE(unity::action::Action::Type)
 #endif

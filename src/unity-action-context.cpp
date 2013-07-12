@@ -19,6 +19,49 @@
 
 using namespace unity::action;
 
+namespace unity {
+namespace action {
+/*!
+ * \class ActionContext
+ *
+ * ActionContext groups actions together and by providing multiple contexts
+ * the developer is able to control the visibility of the actions. The ActionManager then exposes the actions from
+ * these different contexts. See \ref page_contexts for more details.
+ */
+
+// property documentation
+
+/*!
+ * \property bool ActionContext::active
+ *
+ * If true the context is active. If false the context is inactive.
+ *
+ * When context has been added to the ActionManager setting this value controls
+ * whether or not the actions in a context are available to external components.
+ *
+ * The ActionManager monitors the active property of each of the local contexts
+ * that has been added to it. There can be only one active local context at a time.
+ * When one of the local contexts sets itself active the manager will notice this,
+ * export the actions from that given context and set the previously active local
+ * context as inactive. This way a call to setActive() on a local context is
+ * sufficient to manage the active local context of the manager and no additional
+ * calls are necessary to manually inactivate the other contexts.
+ *
+ * \initvalue false
+ *
+ * \accessors active(), setActive()
+ *
+ * \notify activeChanged()
+ */
+
+/*!
+ * \fn void ActionContext::actionsChanged()
+ * Notifies that the actions inside a context have changed from a call to
+ * addAction() or removeAction().
+ */
+}
+}
+
 //! \private
 class Q_DECL_HIDDEN unity::action::ActionContext::Private : public QObject
 {
@@ -54,6 +97,15 @@ ActionContext::Private::actionDestroyed(QObject *obj)
     q->removeAction(action);
 }
 
+/*!
+ * \fn ActionContext::ActionContext(QObject *parent = 0)
+ *
+ * Creates a new ActionContext.
+ * ActionContext has to be added to the ActionManager and set active to
+ * make it's actions vailable for external components.
+ *
+ * \param parent parent QObject or 0
+ */
 ActionContext::ActionContext(QObject *parent)
     : QObject(parent),
       d(new Private(this))
@@ -66,6 +118,20 @@ ActionContext::~ActionContext()
 
 }
 
+/*!
+ * Adds an action to the context.
+ *
+ * \param action Action to be added to the context
+ *
+ * Calling this function multiple times with the same action
+ * does not have any side effects; the action gets added only once.
+ *
+ * ActionContext monitors if the action is deleted and does the appropriate
+ * cleanup when necessary, so it is not mandatory to call removeAction()
+ * before the action is destroyed.
+ *
+ * \note action must not be 0
+ */
 void
 ActionContext::addAction(Action *action)
 {
@@ -79,6 +145,17 @@ ActionContext::addAction(Action *action)
     emit actionsChanged();
 }
 
+/*!
+ * Removes an action from the context.
+ *
+ * \param action Action to be removed to the context
+ *
+ * Calling this function multiple times with the same action
+ * does not have any side effects; the action gets removed only if
+ * it was first added to the context with addAction().
+ *
+ * \note action must not be 0
+ */
 void
 ActionContext::removeAction(Action *action)
 {
@@ -107,6 +184,9 @@ ActionContext::setActive(bool value)
     emit activeChanged(value);
 }
 
+/*!
+ * \returns The set of actions in the context.
+ */
 QSet<Action *>
 ActionContext::actions() const
 {

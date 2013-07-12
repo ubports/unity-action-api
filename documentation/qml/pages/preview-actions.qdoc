@@ -1,0 +1,91 @@
+/*!
+\page preview-actions.html Preview Actions
+\title Preview Actions
+\contentspage {Unity Action API}
+
+The preview action is an action that allows the application to generate a preview of the action before
+the action is applied. The preview is controlled by the HUD UI.
+
+PreviewActions contain one or more parameters which form the preview parameters of the action.
+
+The PreviewAction has additional extra requirements compared to other Actions:
+\list
+    \li - It can have multiple parameters whose values can be seen and changed over the bus
+    \li - The parameters' ordering can be specified by client code
+    \li - It adds new signals to control the preview mode: started, cancelled, resetted
+\endlist
+
+The ordering of the parameters is specified by the order in which the actions are defined in the parameters list.
+
+PreviewAction does not have a value of it's own. Instead the values of the parameters provide the information
+on which the preview is generated.
+
+\image hud_parameters.jpg
+\caption HUD UI showing Color Balance action with four slider parameters
+
+
+\part Control Signals
+Diagram describing when the different signals are emitted:
+\image preview_action_signals.png
+
+\e {started} signal informs the application that it must set up a preview view and start updating the
+preview based on the values of the defined preview parameters.
+
+\e {resetted} signal informs the application that it has to reset the parameter values to their original values.
+
+\e {cancelled} signal informs the application that the user cancelled the PreviewAction. At this point the application
+must return the the state it was in at the time the \e {started()} signal was triggered without applying any changes.
+
+\e {triggered} signal informs the application the user wants the changes to be applied.
+
+\part Example
+
+
+\code
+    import QtQuick 2.0
+    import Ubuntu.Unity.Action 1.0
+
+    Item {
+        ActionManager {
+
+            PreviewAction {
+                text: "Exposure"
+
+                PreviewRangeParameter {
+                    id: exposureParameter
+                    text: "Exposure Amount"
+                    minimumValue: -50
+                    maximumValue: 50
+                    value: 25
+
+                    onValueChanged: {
+                        // gets the values from the HUD UI when user interacts with the slider
+                        // Application then updates the preview based on this value
+                        console.debug("range value: " + value);
+                    }
+                }
+
+                onStarted: {
+                    // action was activated in the HUD UI.
+                    // do the necessary initialization and start providing preview
+                    // based on the values of the parameters.
+                }
+
+                onResetted: {
+                     // reset the parameter values
+                }
+
+                onCancelled: {
+                    // action was cancelled
+                }
+
+                onTriggered: {
+                    // action was completed.
+                    // apply the action with the values of the parameters
+                }
+            }
+
+        }
+    }
+\endcode
+*/

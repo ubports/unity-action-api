@@ -1,0 +1,15 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Mail Application
+Exec=mail-app %u
+Actions=Compose;Contacts
+
+[Desktop Action Compose]
+Name=Compose New Message
+OnlyShowIn=Messaging Menu;Unity;
+Exec=
+
+[Desktop Action Contacts]
+Name=Contacts
+OnlyShowIn=Messaging Menu;Unity;
+Exec=

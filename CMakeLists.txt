@@ -62,8 +62,13 @@ find_package(Qt5Quick REQUIRED)
 include_directories(include)
 add_subdirectory(src)
 add_subdirectory(qml)
-add_subdirectory(documentation)
 add_subdirectory(examples)
+
+option(GENERATE_DOCUMENTATION "Generate documenation for C++ and QML" OFF)
+if(${GENERATE_DOCUMENTATION})
+  add_subdirectory(documentation)
+endif()
+
 
 find_program(qmltestrunner_exe qmltestrunner)
 
@@ -121,8 +126,11 @@ macro(add_qml_test COMPONENT_NAME)
     endif("${qmltest_NO_TARGETS}" STREQUAL "FALSE")
 endmacro(add_qml_test)
 
-enable_testing()
-add_subdirectory(test)
+option(ENABLE_TESTING "Enable testing." ON)
+if(${ENABLE_TESTING})
+  enable_testing()
+  add_subdirectory(test)
+endif()
 
 include(EnableCoverageReport)
 #####################################################################
