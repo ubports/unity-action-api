@@ -44,9 +44,43 @@ install(
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 
-set_target_properties(unity-action-qt PROPERTIES SOVERSION 0.0.0)
+# from www.nondot.org/sabre/Mirrored/libtool-2.1a/libtool_6.html
+# Here are a set of rules to help you update your library version information:
+#
+#    Start with version information of `0:0:0' for each libtool library.
+#    Update the version information only immediately before a public release of your
+#    software. More frequent updates are unnecessary, and only guarantee that the current
+#    interface number gets larger faster.
+#
+#    If the library source code has changed at all since the last update, then increment
+#    revision (`c:r:a' becomes `c:r+1:a').
+#
+#    If any interfaces have been added, removed, or changed since the last update, increment
+#    current, and set revision to 0.
+
+#    If any interfaces have been added since the last public release, then increment age.
+#    If any interfaces have been removed since the last public release, then set age to 0. 
+
+set(SO_CURRENT  0)
+set(SO_REVISION 0)
+set(SO_AGE      0)
+
+set_target_properties(unity-action-qt PROPERTIES
+                      SOVERSION ${SO_CURRENT}.${SO_REVISION}.${SO_AGE}
+)
+
+set(API_VERSION 1)
+
+set(libdir "${CMAKE_INSTALL_FULL_LIBDIR}")
+set(includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/unity-action-qt/unity/action")
+set(VERSION "${API_VERSION}")
+
+configure_file("unity-action-qt.pc.in" "${CMAKE_CURRENT_BINARY_DIR}/unity-action-qt.pc" @ONLY)
+install(
+  FILES "${CMAKE_CURRENT_BINARY_DIR}/unity-action-qt.pc"
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
+)
 
 #install the headers
-# TODO: add library version to the path
-# TODO: add .pc file
-#install(FILES ${PUBLIC_HEADERS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/unity/action" )
+install(FILES ${PUBLIC_HEADERS}
+        DESTINATION ${includedir})
