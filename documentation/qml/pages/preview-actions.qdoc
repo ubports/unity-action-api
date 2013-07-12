@@ -11,13 +11,13 @@ PreviewActions contain one or more parameters which form the preview parameters 
 The PreviewAction has additional extra requirements compared to other Actions:
 \list
     \li - It can have multiple parameters whose values can be seen and changed over the bus
-    \li - The parameters’ ordering can be specified by client code
+    \li - The parameters' ordering can be specified by client code
     \li - It adds new signals to control the preview mode: started, cancelled, resetted
 \endlist
 
 The ordering of the parameters is specified by the order in which the actions are defined in the parameters list.
 
-PreviewAction does not have a value of it’s own. Instead the values of the parameters provide the information
+PreviewAction does not have a value of it's own. Instead the values of the parameters provide the information
 on which the preview is generated.
 
 \image hud_parameters.jpg

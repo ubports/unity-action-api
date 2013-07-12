@@ -455,7 +455,7 @@ ActionManager::addLocalContext(ActionContext *context)
 /*!
  * \param context context to be removed
  *
- * Remove a local context.
+ * Removes a local context.
  *
  * Calling this function multiple times with the same context
  * does not have any side effects; the context gets removed only if
