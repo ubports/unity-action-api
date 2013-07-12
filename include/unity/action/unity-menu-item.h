@@ -28,48 +28,9 @@ namespace action {
 #include <QVariant>
 #include <QScopedPointer>
 
-/*!
- * Actions are contributed to different parts of the user interface using one of the below classes.
- * Before contribution, the only place that actions will appear automatically is in the HUD.
- *
- * The MenuItem contribution element is used to contribute a specified Action to menu-like UI elements.
- * It allows overriding of the Action’s default label - for example, to shorten it if it is too long to
- * fit in the destination menu.
- *
- * MenuItem without any associated Action will be shown in a menu as a simple label.
- *
- * The target property allows contribution of a simple parameterised action with a pre-set input value. For example:
-
-Action {
-    id: switch
-    parameterType: Action.String
-    onTriggered: {
-if(arg == “on”)
-    enableStuff()
-else if (arg == “off”)
-    disableStuff()
-else
-    console.log (“Invalid argument: “ + arg)
-}
-
-Unity.AppIndicator {
-MenuItem {
-action: switch
-text: “switch on”
-target: “on”
-},
-MenuItem {
-action: switch
-text: “switch off”
-target: “off”
-}
-}
-
- * In the above example, the application indicator menu would gain two items labelled
- * “switch on” and “switch off”. Each would trigger the “switch” Action with the
- * parameters “on” and “off”, respectively.
- */
-class Q_DECL_EXPORT unity::action::MenuItem : public QObject
+// Make private for now.
+/*! \private */
+class Q_DECL_HIDDEN unity::action::MenuItem : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(MenuItem)
