@@ -19,7 +19,6 @@
 
 using namespace unity::action;
 
-
 class Q_DECL_HIDDEN unity::action::MenuItem::Private : public QObject
 {
     Q_OBJECT

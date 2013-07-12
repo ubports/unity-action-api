@@ -28,7 +28,9 @@ namespace action {
 #include <QVariant>
 #include <QScopedPointer>
 
-class Q_DECL_EXPORT unity::action::MenuItem : public QObject
+// Make private for now.
+/*! \private */
+class Q_DECL_HIDDEN unity::action::MenuItem : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(MenuItem)

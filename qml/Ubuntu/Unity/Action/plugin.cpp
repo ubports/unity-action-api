@@ -40,7 +40,8 @@ UnityActionQmlPlugin::registerTypes(const char *uri)
     qmlRegisterType<unity::action::PreviewParameter>      ();
     qmlRegisterType<unity::action::PreviewRangeParameter> (uri, 1, 0, "PreviewRangeParameter");
 
-    qmlRegisterType<unity::action::MenuItem> (uri, 1, 0, "MenuItem");
+    // Don't provide menu item just yet.
+    //qmlRegisterType<unity::action::MenuItem> (uri, 1, 0, "MenuItem");
 
     qmlRegisterType<unity::action::ActionContext>      ();
     qmlRegisterType<unity::action::qml::ActionContext> (uri, 1, 0, "ActionContext");
