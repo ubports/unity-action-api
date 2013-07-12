@@ -1,0 +1,29 @@
+/*!
+\page page_future-plans Future Development Plans
+
+\section sec_action Action
+\subsection sec_action-state State Property
+
+Action should be able to hold a state. State is persistent compared to the onTriggered() value.
+State allows us to do more complex interaction with the external platform components.
+
+\section sec_preview-action Preview Action
+\subsection sec_preview-action-modes Preview Modes
+Currently the PreviewAction does all the previews "live;" the values update continuously and the application is
+expected to generate the preview on constantly.
+
+This can be problematic if the application is unable to generate a preview or generating the preview is so expensive
+resource-wise that it's not feasible to do a live preview.
+
+In the future the PreviewAction will offer more preview modes which allows the developer to specify manual or partial previews.
+
+\subsection sec_preview-action-layout Layout for PreviewParameters
+Currently the PreviewAction does not offer a way to control the layout of the PreviewParameters. In the future a layout support could be added.
+
+\subsection sec_preview-action-more-parameters Additional Preview Parameters
+Currently the only supported preview parameter is the PreviewRangeParameter. We need more parameter types like Text, Boolean and ListSelection.
+
+\section sec_context ActionContext
+\subsection sec_custom-toolbar-item Custom HUD Toolbar Items
+Application should be able to provide their own custom toolbar items in the HUD toolbar.
+*/

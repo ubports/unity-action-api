@@ -1,177 +1,94 @@
 /*!
-\page contexts.html contexts
-\title HUD Contexts
-\contentspage {Ubuntu HUD}
+\page contexts.html Action Contexts
+\title Action Contexts
+\contentspage {Unity Action API}
 
 \part Overview
-Application which has different views needs to manage it actions based on the currently active view.
-Not all of the actions supported by the application might be relevant or applicable on all of the views.
+Application which has different views needs to manage it actions based on the currently active view;
+not all of the actions supported by the application might be relevant or applicable on all of the views.
 
-Therefore HUD has a notion of contexts; context groups actions together and by providing multiple contexts
-the developer is able to control the visibility of the actions based on context.
+Therefore Unity Action API provides action contexts; a context groups actions together and by providing multiple contexts
+the developer is able to control the visibility of the actions. The ActionManager then exposes the actions from
+these different contexts.
+
+\image context_overview.png
+
+Each application has one global context; the actions in this context are always available. The application may have one or more
+additional local context of which only one can be active at a time. The ActionManager merges the global context and the active local
+context together; the actions available at any given time is the union of the global context and the active local context.
+
+\image multiple_contexts.png
 
 
 \part Applications with Single Context
-For applications that do not require multiple contexts using the API is straight forward:
+For applications that do not require multiple contexts using the API is straight forward as the
+ActionManager provides the global context automatically.
 
 \code
     import QtQuick 2.0
-    import Ubuntu.Components 0.1
-    import Ubuntu.HUD 1.0 as HUD
+    import Ubuntu.Unity.Action 1.0
 
-
-    MainView {
-        width: units.gu(48)
-        height: units.gu(60)
-
-        HUD.HUD {
-            applicationIdentifier: "my_app" // must match the .desktop file name
-            HUD.Context {
-                HUD.Action {
-                    label: "My Action 1"
-                }
-                HUD.Action {
-                    label: "My Action 2"
-                }
-                HUD.Action {
-                    label: "My Action 3"
-                }
+    Item {
+        ActionManager {
+            Action {
+                id: globalAction
+                text: "My Global Action"
             }
         }
     }
 \endcode
+
+globalAction is now added to the global context.
+
 
 \part Applications with Multiple Contexts
-Multiple contexts must be managed by the developer.
+When multiple contexts are needed the developer creates suitable number of ActionContext objects,
+adds the actions to the contexts, adds the contexts to the manager and sets the active one.
+
+Setting the active context must be managed by the developer. The can only be one active
+local context at a time.
 
 \code
     import QtQuick 2.0
-    import Ubuntu.Components 0.1
-    import Ubuntu.HUD 1.0 as HUD
+    import Ubuntu.Unity.Action 1.0
 
-
-    MainView {
-        width: units.gu(48)
-        height: units.gu(60)
-
-        // HUD.HUD is application wide
-        HUD.HUD {
-            id:hud
-            applicationIdentifier: "my_app" // must match the .desktop file name
-            contexts: [ctx0, ctx1] // Add both contexts to the HUD
-        }
-
-        PageStack {
-            id: pageStack
-            Component.onCompleted: push(page0)
-
-            Page {
-                // Actions that are available for this page
-                HUD.Context {
-                    id: ctx0
-                    HUD.Action {
-                        label: i18n.tr("My Action 1")
-                    }
-                }
-
-                id: page0
-                title: i18n.tr("Root page")
-                visible: false
-            }
-
-            Page {
-                // Actions that are available for this page
-                HUD.Context {
-                    id: ctx1
-
-                    HUD.Action {
-                        label: i18n.tr("My Action 2")
-                    }
-                }
-                title: "Rectangle"
-                id: page1
-                visible: false
-            }
-
-            onCurrentPageChanged: {
-                // When using multiple contexts they have to be managed manually
-                if (currentPage === page0) {
-                    hud.setActiveContext(ctx0)
-                } else if (currentPage === page1) {
-                    hud.setActiveContext(ctx1)
-                }
+    Item {
+        ActionManager {
+            localContexts: [ctx1, ctx2]
+            Action {
+                id:   globalAction
+                text: "My Global Action"
             }
         }
-    }
-\endcode
 
-\part Sharing Actions between Contexts
-If some actions are shared between Contexts the actions must be declared outside of any of the contexts and
-be added by their id's.
-
-\code
-    import QtQuick 2.0
-    import Ubuntu.Components 0.1
-    import Ubuntu.HUD 1.0 as HUD
-
-
-    MainView {
-        width: units.gu(48)
-        height: units.gu(60)
-
-        HUD.HUD {
-            id:hud
-            applicationIdentifier: "my_app" // must match the .desktop file name
-            contexts: [ctx0, ctx1]
+        ActionContext {
+            id: ctx1
+            Action {
+                id:   ctx1Action1
+                text: "Context1, Action 1"
+            }
+            Action {
+                id:   ctx1Action2
+                text: "Context1, Action 2"
+            }
         }
 
-        HUD.SettingsAction {
-            id: settingsAction
-
-            // display settings
-            onTriggered: {}
+        ActionContext {
+            id: ctx2
+            Action {
+                id:   ctx2Action1
+                text: "Context2, Action 1"
+            }
+            Action {
+                id:   ctx2Action2
+                text: "Context2, Action 2"
+            }
         }
 
-        PageStack {
-            id: pageStack
-            Component.onCompleted: push(page0)
-
-            Page {
-                HUD.Action {
-                    id: action1
-                    label: i18n.tr("My Action 1")
-                }
-                HUD.Context {
-                    id: ctx0
-                    actions: [settingsAction, action1]
-                }
-
-                id: page0
-                title: i18n.tr("Root page")
-                visible: false
-            }
-
-            Page {
-                HUD.Action {
-                    id: action2
-                    label: i18n.tr("My Action 2")
-                }
-                HUD.Context {
-                    id: ctx1
-                    actions: [settingsAction, action2]
-                }
-                title: "Rectangle"
-                id: page1
-                visible: false
-            }
-
-            onCurrentPageChanged: {
-                if (currentPage === page0) {
-                    hud.setActiveContext(ctx0)
-                } else if (currentPage === page1) {
-                    hud.setActiveContext(ctx1)
-                }
-            }
+        Component.onCompleted: {
+            ctx2.active = true;
+            // now the ActionManager has exported
+            // globalAction, ctx2Action1 and ctx2Action2
         }
     }
 \endcode

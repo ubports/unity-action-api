@@ -78,6 +78,7 @@ Item {
     }
 
 
+/*
     MenuItem {
         action: myaction1
         text: "New Message"
@@ -86,6 +87,7 @@ Item {
         visible: true
         enabled: false
     }
+*/
 
     Component.onCompleted: {
         ctx2.active = true

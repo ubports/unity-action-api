@@ -1,31 +1,14 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
-# Sample debian/rules that uses debhelper.
-# This file was originally written by Joey Hess and Craig Small.
-# As a special exception, when this file is copied by dh-make into a
-# dh-make output file, you may use that output file without restriction.
-# This special exception was added by Craig Small in version 0.37 of dh-make.
 
 # Comment this to turn off verbose mode.
-export DH_VERBOSE=1
+#export DH_VERBOSE=1
 
-export DPKG_GENSYMBOLS_CHECK_ARGS=4
 export DPKG_GENSYMBOLS_CHECK_LEVEL=4
-export G_MESSAGES_DEBUG=all
-export DEBIAN_TARGET_DIR="${CURDIR}/debian/tmp"
 
 %:
-	dh $@ --parallel
+	dh $@ --parallel --fail-missing
 
 override_dh_auto_configure:
-	dh_auto_configure -- -DDEBIAN_TARGET_DIR="${DEBIAN_TARGET_DIR}" -DENABLE_TESTING=OFF
+	dh_auto_configure -- -DGENERATE_DOCUMENTATION=ON
 
-override_dh_install:
-	dh_install --fail-missing
-
-override_dh_install:
-# execute dh_install and fail if something was not packaged
-	dh_install --fail-missing
-
-%:
-	dh $@ 

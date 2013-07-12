@@ -51,7 +51,6 @@ public:
     explicit PreviewRangeParameter(QObject *parent = 0);
     virtual ~PreviewRangeParameter();
 
-    /*! user visible label of the parameter */
     QString text() const;
     void setText(const QString &value);
 

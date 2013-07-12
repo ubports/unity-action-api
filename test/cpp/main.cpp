@@ -20,7 +20,7 @@
 #include "tst_action.h"
 #include "tst_previewaction.h"
 #include "tst_previewrangeparameter.h"
-#include "tst_menuitem.h"
+//#include "tst_menuitem.h"
 #include "tst_actioncontext.h"
 #include "tst_actionmanager.h"
 
@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     TestAction tst_action;
     TestPreviewAction tst_previewaction;
     TestPreviewRangeParameter tst_previewrangeparameter;
-    TestMenuItem tst_menuitem;
+//    TestMenuItem tst_menuitem;
     TestActionContext tst_actioncontext;
     TestActionManager tst_actionmanager;
 
@@ -42,8 +42,10 @@ int main(int argc, char *argv[])
         return 1;
     if (QTest::qExec(&tst_previewrangeparameter, argc, argv) != 0)
         return 1;
+#if 0
     if (QTest::qExec(&tst_menuitem, argc, argv) != 0)
         return 1;
+#endif
     if (QTest::qExec(&tst_actioncontext, argc, argv) != 0)
         return 1;
     if (QTest::qExec(&tst_actionmanager, argc, argv) != 0)

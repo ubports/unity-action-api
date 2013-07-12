@@ -19,7 +19,8 @@ set(PUBLIC_HEADERS
     ${PUBLIC_HEADER_DIR}/unity-preview-parameter.h
     ${PUBLIC_HEADER_DIR}/PreviewRangeParameter
     ${PUBLIC_HEADER_DIR}/unity-preview-range-parameter.h
-    ${PUBLIC_HEADER_DIR}/MenuItem
+#    Don't publish MenuItem yet as we don't have any consumers
+#    ${PUBLIC_HEADER_DIR}/MenuItem
     ${PUBLIC_HEADER_DIR}/unity-menu-item.h
     ${PUBLIC_HEADER_DIR}/ActionManager
     ${PUBLIC_HEADER_DIR}/unity-action-manager.h

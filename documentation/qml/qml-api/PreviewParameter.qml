@@ -14,15 +14,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import QtQuick 2.0
 
-#include "mainwindow.h"
-#include <QApplication>
+/*!
 
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+\qmltype PreviewParameter
+\inqmlmodule Ubuntu.Unity.Action 1.0
+\ingroup action-non-instantiable
+\since 1.0
 
-    return a.exec();
+Base class for all the parameter classes.
+See the subclasses.
+
+*/
+
+Item {
+
 }
