@@ -37,7 +37,6 @@ Description: Unity Action Qt API
 Package: libunity-action-qt1-dev
 Section: libdevel
 Architecture: any
->>>>>>> MERGE-SOURCE
 Pre-Depends: ${misc:Pre-Depends}
 Multi-Arch: same
 Depends: ${misc:Depends},
