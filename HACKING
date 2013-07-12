@@ -1,0 +1,4 @@
+
+When making minor releases remember to update the API version and .so version
+in src/CMakeList.txt. 
+

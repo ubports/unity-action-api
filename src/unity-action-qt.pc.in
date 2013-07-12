@@ -3,9 +3,8 @@ includedir=@includedir@
 
 Cflags: -I${includedir}/
 Requires: hud-2 Qt5Core
-Libs: -L${libdir} -lunity-action-qt
+Libs: @ABSOLUTE_SO_FILE@
 
 Name: unity-action-qt
 Description: Unity Common Action API
-Version: @VERSION@
-
+Version: @API_VERSION_MAJOR@.@API_VERSION_MINOR@

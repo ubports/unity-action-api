@@ -31,7 +31,7 @@ Depends: ${misc:Depends},
 Description: Unity Action Qt API
  Unity Common Action API
 
-Package: libunity-action-qt-dev
+Package: libunity-action-qt1-dev
 Section: libs
 Architecture: amd64 armhf i386
 Pre-Depends: ${misc:Pre-Depends}

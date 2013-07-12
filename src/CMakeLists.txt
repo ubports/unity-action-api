@@ -65,22 +65,25 @@ set(SO_CURRENT  0)
 set(SO_REVISION 0)
 set(SO_AGE      0)
 
+set(SO_VERSION ${SO_CURRENT}.${SO_REVISION}.${SO_AGE})
+
 set_target_properties(unity-action-qt PROPERTIES
-                      SOVERSION ${SO_CURRENT}.${SO_REVISION}.${SO_AGE}
+                      SOVERSION ${SO_VERSION}
 )
 
-set(API_VERSION 1)
+set(API_VERSION_MAJOR 1)
+set(API_VERSION_MINOR 0)
 
+set(PC_FILE_TARGET "${CMAKE_CURRENT_BINARY_DIR}/unity-action-qt-${API_VERSION_MAJOR}.pc")
 set(libdir "${CMAKE_INSTALL_FULL_LIBDIR}")
-set(includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/unity-action-qt/unity/action")
-set(VERSION "${API_VERSION}")
-
-configure_file("unity-action-qt.pc.in" "${CMAKE_CURRENT_BINARY_DIR}/unity-action-qt.pc" @ONLY)
+set(includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/unity-action-qt-${API_VERSION_MAJOR}")
+set(ABSOLUTE_SO_FILE "${CMAKE_INSTALL_FULL_LIBDIR}/unity-action-qt.so.${SO_VERSION}")
+configure_file("unity-action-qt.pc.in" ${PC_FILE_TARGET} @ONLY)
 install(
-  FILES "${CMAKE_CURRENT_BINARY_DIR}/unity-action-qt.pc"
+  FILES ${PC_FILE_TARGET}
   DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
 )
 
 #install the headers
 install(FILES ${PUBLIC_HEADERS}
-        DESTINATION ${includedir})
+        DESTINATION "${includedir}/unity/action")
