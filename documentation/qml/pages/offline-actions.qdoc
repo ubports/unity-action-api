@@ -1,0 +1,45 @@
+/*!
+\page offline-actions.html Offline Actions
+\title Offline Actions
+\contentspage {Unity Action API}
+
+Applications can define offline (jump list) actions in their \e {.desktop} files. These actions are available in the Launcher,
+AppMenu, HUD and MessagingMenu even if the application is not running. When an offline action is executed and the application
+is not running the application is started and executes the given action on startup, but for the user it does not make any
+difference if the application is running or not prior to the action invocation.
+
+
+This example assumes we have a mail application, \e {MailApp}. This application defines offline actions in \e {mail-app.desktop}:
+\quotefile mail-app/mail-app.desktop
+
+The desktop file's \e {Actions} key lists the offline actions. Each action then has its own group entry in the \e {.desktop} file.
+\e {MailApp} defines two offline actions: \e {Compose} and \e {Contacts}.
+
+By leaving the \e {Exec} keys empty for the actions the platform will invoke the Unity Actions defined by the application.
+
+Now, the Application has to define corresponding actions in it's code:
+\code
+    import QtQuick 2.0
+    import Ubuntu.Unity.Action 1.0
+
+    Item {
+        ActionManager {
+            Action {
+                id: newMessageAction
+                name: "Compose" // matches the .desktop file Desktop Action identifier
+                onTriggered: {
+                    // show the compose view
+                }
+            }
+            Action {
+                id: openAddressBookAction
+                name: "Contacts" // matches the .desktop file Desktop Action identifier
+                onTriggered: {
+                    // show the address book view
+                }
+            }
+        }
+    }
+\endcode
+
+*/

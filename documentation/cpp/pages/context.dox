@@ -58,6 +58,4 @@ Setting an another context active later will inactivate the previously active on
 The complete example:
 \include action-context/action-context.cpp
 
-The complete example:
-
 */

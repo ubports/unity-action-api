@@ -20,7 +20,7 @@ on which the preview is generated.
 
 \section sec_control_signals Control Signals
 Diagram describing when the different signals are emitted:
-\image html preview_action_signals.png "Preview Action Signals"
+\image html preview_action_signals.png
 
 <i>started</i> signal informs the application that it must set up a preview view and start updating the
 preview based on the values of the defined preview parameters.
