@@ -45,14 +45,20 @@ Depends: ${misc:Depends},
 Suggests: unity-action-doc,
 Description: Unity Action Qt API - development files
  Unity Common Action API
+ .
+ This package contains development files to develop against the library.
 
 Package: qtdeclarative5-unity-action1.0
 Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
+Multi-Arch: same
 Depends: ${misc:Depends},
          ${shlibs:Depends},
          libunity-action-qt1 (= ${binary:Version}),
 Description: Unity Action QML Components
  Unity Common Action API
+ .
+ This package contains the qtdeclarative binding for the unity-action library.
 
 Package: unity-action-doc
 Section: doc
