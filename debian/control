@@ -42,6 +42,8 @@ Multi-Arch: same
 Depends: ${misc:Depends},
          ${shlibs:Depends},
          libunity-action-qt1 (= ${binary:Version}),
+         qtbase5-dev,
+         libhud2-dev,
 Suggests: unity-action-doc,
 Description: Unity Action Qt API - development files
  Unity Common Action API
