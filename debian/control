@@ -46,7 +46,7 @@ Suggests: unity-action-doc,
 Description: Unity Action Qt API - development files
  Unity Common Action API
 
-Package: qtdeclarative5-unity-action1.0
+Package: qtdeclarative5-unity-action-plugin
 Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends},
