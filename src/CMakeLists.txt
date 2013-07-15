@@ -45,9 +45,26 @@ install(
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 
-set_target_properties(unity-action-qt PROPERTIES SOVERSION 0.0.0)
+
+set(API_VERSION_MAJOR 1)
+set(API_VERSION_MINOR 0)
+
+set(SO_VERSION ${API_VERSION_MAJOR})
+
+set_target_properties(unity-action-qt PROPERTIES
+                      SOVERSION ${SO_VERSION}
+)
+
+set(PC_FILE_TARGET "${CMAKE_CURRENT_BINARY_DIR}/unity-action-qt-${API_VERSION_MAJOR}.pc")
+set(libdir "${CMAKE_INSTALL_FULL_LIBDIR}")
+set(includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/unity-action-qt-${API_VERSION_MAJOR}")
+set(ABSOLUTE_SO_FILE "${CMAKE_INSTALL_FULL_LIBDIR}/libunity-action-qt.so.${SO_VERSION}")
+configure_file("unity-action-qt.pc.in" ${PC_FILE_TARGET} @ONLY)
+install(
+  FILES ${PC_FILE_TARGET}
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
+)
 
 #install the headers
-# TODO: add library version to the path
-# TODO: add .pc file
-#install(FILES ${PUBLIC_HEADERS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/unity/action" )
+install(FILES ${PUBLIC_HEADERS}
+        DESTINATION "${includedir}/unity/action")
