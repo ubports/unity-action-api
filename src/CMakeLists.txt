@@ -45,35 +45,15 @@ install(
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 
-# from www.nondot.org/sabre/Mirrored/libtool-2.1a/libtool_6.html
-# Here are a set of rules to help you update your library version information:
-#
-#    Start with version information of `0:0:0' for each libtool library.
-#    Update the version information only immediately before a public release of your
-#    software. More frequent updates are unnecessary, and only guarantee that the current
-#    interface number gets larger faster.
-#
-#    If the library source code has changed at all since the last update, then increment
-#    revision (`c:r:a' becomes `c:r+1:a').
-#
-#    If any interfaces have been added, removed, or changed since the last update, increment
-#    current, and set revision to 0.
 
-#    If any interfaces have been added since the last public release, then increment age.
-#    If any interfaces have been removed since the last public release, then set age to 0. 
+set(API_VERSION_MAJOR 1)
+set(API_VERSION_MINOR 0)
 
-set(SO_CURRENT  0)
-set(SO_REVISION 0)
-set(SO_AGE      0)
-
-set(SO_VERSION ${SO_CURRENT}.${SO_REVISION}.${SO_AGE})
+set(SO_VERSION ${API_VERSION_MAJOR})
 
 set_target_properties(unity-action-qt PROPERTIES
                       SOVERSION ${SO_VERSION}
 )
-
-set(API_VERSION_MAJOR 1)
-set(API_VERSION_MINOR 0)
 
 set(PC_FILE_TARGET "${CMAKE_CURRENT_BINARY_DIR}/unity-action-qt-${API_VERSION_MAJOR}.pc")
 set(libdir "${CMAKE_INSTALL_FULL_LIBDIR}")
