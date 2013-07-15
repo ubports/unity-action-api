@@ -938,11 +938,6 @@ ActionManager::Private::destroyAction(Action *action)
 
     action->disconnect(this);
 
-    if (adata.isPreviewAction) {
-        PreviewAction *previewAction = qobject_cast<PreviewAction *>(action);
-        Q_ASSERT(previewAction != 0);
-    }
-
     actionData.remove(action);
     actions.remove(action);
     emit q->actionsChanged();
