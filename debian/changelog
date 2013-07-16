@@ -1,4 +1,4 @@
-unity-action-api (1.0.0-0ubuntu1) UNRELEASED; urgency=low
+unity-action-api (1.0.0+13.10.20130716-0ubuntu1) saucy; urgency=low
 
   [ Antti Kaijanmäki ]
   * Initial packaging.
@@ -6,4 +6,48 @@ unity-action-api (1.0.0-0ubuntu1) UNRELEASED; urgency=low
   [ Didier Roche ]
   * Clean packaging for daily release
 
- -- Antti Kaijanmäki <antti.kaijanmaki@canonical.com>  Thu, 06 Jun 2013 15:56:04 +0300
+  [ Antti Kaijanmäki ]
+  * Initial Commit. - CMake build system - documentation setup - C++
+    library setup - QML plugin setup - unit testing and coverage setup
+  * Initial debian packaging.
+  * Add missing build-deps.
+  * Fix copyright and licensing headers.
+  * Exclude test files from coverage results.
+  * Introduce PreviewAction.
+  * PreviewParameter and PreviewRangeParameter.
+  * Introduce MenuItem.
+  * ActionManager and ActionContext.
+  * Manager: Get the application identifier from APP_ID env var Action:
+    add Q_INVOKABLE and make actions() const.
+  * ActionManager: second iteration of the Action Manager.
+  * ActionManager: fix PreviewParameter menu updates.
+  * Verify the Action::trigger(QVariant) parameter type as well as
+    possible and give a friendly warning if the types mismatch.
+  * Protect against dangling pointers when objects are being deleted
+    outside our control. Also simplifies the code that disconnects
+    signals when objects are removed from the manager.
+  * ActionManager: Fix bug in bookkeeping when action is added to
+    multiple contexts. Action was only being added to the ContextData of
+    the first context to introduce it. Now it's added to Context data of
+    all of the contexts containing the action. Also add some more unit
+    tests.
+  * ActionManager: PreviewAction testing.
+  * Activate Global Context in HUD on init.
+  * Manager: - If context is added to the manager and it's initially set
+    as active, make it the active local context.
+  * * Add QQmlListProperty to all the relevant QML classes. * menuitem:
+    disconnect destroy signal if action is not null.
+  * * Handle the situation better where we don't have d-bus.
+  * documentation for C++ and QML.
+  * Temporarily remove MenuItem from the public API.
+  * Action::trigger() must check the enabled property.
+  * populate -dev package and add .pc.
+  * remove leftover code.
+
+  [ Didier Roche ]
+  * populate -dev package and add .pc.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 28
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 16 Jul 2013 08:42:31 +0000
