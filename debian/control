@@ -1,4 +1,4 @@
-Source: unity-action
+Source: unity-action-api
 Section: libs
 Priority: optional
 Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
