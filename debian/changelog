@@ -1,4 +1,4 @@
-unity-action (1.0.0-0ubuntu1) UNRELEASED; urgency=low
+unity-action-api (1.0.0-0ubuntu1) UNRELEASED; urgency=low
 
   [ Antti Kaijanmäki ]
   * Initial packaging.
