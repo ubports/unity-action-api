@@ -1,0 +1,2 @@
+#!/usr/bin/env sh
+# Don't compress files or it breaks reading the docs
