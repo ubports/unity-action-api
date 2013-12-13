@@ -1,5 +1,9 @@
 # add a target to generate API documentation with qdoc
-FIND_PROGRAM(QDOC_EXECUTABLE qdoc)
+if(DEFINED ENV{DEB_BUILD_MULTIARCH})
+  set(QDOC_EXECUTABLE "/usr/lib/$ENV{DEB_BUILD_MULTIARCH}/qt5/bin/qdoc")
+else()
+  FIND_PROGRAM(QDOC_EXECUTABLE qdoc)
+endif()
 if(QDOC_EXECUTABLE)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/unity-action-qml.qdocconf.in ${CMAKE_CURRENT_BINARY_DIR}/unity-action-qml.qdocconf @ONLY)
 add_custom_target(qmldoc
