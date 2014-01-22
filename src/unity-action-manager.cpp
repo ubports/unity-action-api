@@ -22,6 +22,9 @@
 
 #include <QSet>
 #include <QDebug>
+#include <QCoreApplication>
+
+#include <libintl.h>
 
 // needed for gio includes.
 #undef signals
@@ -198,6 +201,16 @@ bool operator== (const ActionData &a, const ActionData &b) {
            a.desc    == b.desc;
 }
 
+namespace {
+class QuitAction: public Action {
+    Q_OBJECT
+};
+
+static inline char * _(const char *__msgid) {
+        return gettext(__msgid);
+}
+}
+
 //! \private
 class Q_DECL_HIDDEN unity::action::ActionManager::Private : public QObject
 {
@@ -210,6 +223,8 @@ public:
 
     ActionContext *globalContext;
     QSet<ActionContext *> localContexts;
+
+    QScopedPointer<Action> quitAction;
 
     ActionContext *activeLocalContext;
 
@@ -359,6 +374,13 @@ ActionManager::ActionManager(QObject *parent)
             error = NULL;
         }
     }
+
+    d->quitAction.reset(new QuitAction());
+    d->quitAction->setText(_("Quit"));
+    d->quitAction->setDescription(_("Quit the application"));
+    d->quitAction->setKeywords(_("Exit;Close"));
+    connect(d->quitAction.data(), SIGNAL(triggered(QVariant)), this, SIGNAL(_quit()));
+    d->globalContext->addAction(d->quitAction.data());
 }
 
 ActionManager::~ActionManager()
@@ -1021,6 +1043,13 @@ ActionManager::Private::updateActionDescription(Action *action,
         hud_action_description_set_attribute_value(desc,
                                                    "commitLabel",
                                                    g_variant_new_string(qPrintable(previewAction->commitLabel())));
+    }
+
+    QuitAction *quitAction = qobject_cast<QuitAction *>(action);
+    if (quitAction != 0) {
+        hud_action_description_set_attribute_value(desc,
+                                                   "hud-toolbar-item",
+                                                   g_variant_new_string("quit"));
     }
 }
 
