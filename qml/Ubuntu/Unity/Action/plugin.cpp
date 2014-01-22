@@ -46,7 +46,7 @@ UnityActionQmlPlugin::registerTypes(const char *uri)
     qmlRegisterType<unity::action::ActionContext>      ();
     qmlRegisterType<unity::action::qml::ActionContext> (uri, 1, 0, "ActionContext");
     qmlRegisterType<unity::action::ActionManager>      ();
-    qmlRegisterType<unity::action::qml::ActionManager> (uri, 1, 0, "ActionManager");
+    qmlRegisterType<unity::action::qml::ActionManager> (uri, 1, 1, "ActionManager");
 
 }
 
