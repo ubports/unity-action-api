@@ -49,6 +49,7 @@ private slots:
     void deletedGlobalContext();
 
 private:
+    int expectedSize = 1;
     unity::action::ActionManager *manager;
     GDBusConnection *dbusc;
     GDBusActionGroup *action_group;
