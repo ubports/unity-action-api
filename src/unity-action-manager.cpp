@@ -206,6 +206,23 @@ class QuitAction: public Action {
     Q_OBJECT
 };
 
+class GlobalActionContext: public ActionContext {
+public:
+    GlobalActionContext(QObject *parent = 0) :
+            ActionContext(parent) {
+    }
+
+    void addBuiltInAction(Action *action) {
+        built_in_actions << action;
+    }
+
+    QSet<Action *> allActions() {
+        return actions() + built_in_actions;
+    }
+private:
+    QSet<Action *> built_in_actions;
+};
+
 static inline char * _(const char *__msgid) {
         return gettext(__msgid);
 }
@@ -221,7 +238,7 @@ public:
 
     QSet<Action *> actions;
 
-    ActionContext *globalContext;
+    GlobalActionContext *globalContext;
     QSet<ActionContext *> localContexts;
 
     QScopedPointer<Action> quitAction;
@@ -240,7 +257,7 @@ public:
     Private(ActionManager *mgr)
         : q(mgr)
     {
-        globalContext = new ActionContext();
+        globalContext = new GlobalActionContext();
         hudManager = 0;
     }
     ~Private() {
@@ -352,7 +369,14 @@ ActionManager::ActionManager(QObject *parent)
 
     d->actionGroup = g_simple_action_group_new();
 
+    d->quitAction.reset(new QuitAction());
+    d->quitAction->setText(_("Quit"));
+    d->quitAction->setDescription(_("Quit the application"));
+    d->quitAction->setKeywords(_("Exit;Close"));
+    connect(d->quitAction.data(), SIGNAL(triggered(QVariant)), this, SIGNAL(_quit()));
+
     d->createContext(d->globalContext);
+    d->globalContext->addBuiltInAction(d->quitAction.data());
     d->updateContext(d->globalContext);
     hud_manager_switch_window_context(d->hudManager,
                                       d->contextData[d->globalContext].publisher);
@@ -374,13 +398,6 @@ ActionManager::ActionManager(QObject *parent)
             error = NULL;
         }
     }
-
-    d->quitAction.reset(new QuitAction());
-    d->quitAction->setText(_("Quit"));
-    d->quitAction->setDescription(_("Quit the application"));
-    d->quitAction->setKeywords(_("Exit;Close"));
-    connect(d->quitAction.data(), SIGNAL(triggered(QVariant)), this, SIGNAL(_quit()));
-    d->globalContext->addAction(d->quitAction.data());
 }
 
 ActionManager::~ActionManager()
@@ -653,7 +670,7 @@ ActionManager::Private::updateActionGroup()
     // current actions in global context and
     // in the active local context
 
-    QSet<Action *> globalActions = globalContext->actions();
+    QSet<Action *> globalActions = globalContext->allActions();
     QSet<Action *> localActions;
     if (activeLocalContext)
         localActions = activeLocalContext->actions();
@@ -726,7 +743,12 @@ ActionManager::Private::updateContext(ActionContext *context)
     ContextData &cdata = contextData[context];
 
     QSet<Action *> oldActions = cdata.actions;
-    QSet<Action *> currentActions = context->actions();
+    QSet<Action *> currentActions;
+    if(context == globalContext) {
+        currentActions = globalContext->allActions();
+    } else {
+        currentActions = context->actions();
+    }
     QSet<Action *> removedActions = oldActions - currentActions;
 
     foreach (Action *action, currentActions) {
@@ -796,7 +818,7 @@ ActionManager::Private::updateHudContext(ActionContext *context, QSet<Action *> 
     const ContextData &cdata = contextData[context];
 
 
-    QSet<Action *> currentActions = context->actions() + globalContext->actions();
+    QSet<Action *> currentActions = context->actions() + globalContext->allActions();
     QSet<Action *> newActions     = currentActions - oldActions;
     QSet<Action *> removedActions = oldActions - currentActions;
 
@@ -843,8 +865,9 @@ ActionManager::Private::contextDestroyed(QObject *obj)
                     << "\tin the client code. ";
         globalContext->disconnect(this);
         destroyContext(globalContext);
-        globalContext = new ActionContext();
+        globalContext = new GlobalActionContext();
         createContext(globalContext);
+        globalContext->addBuiltInAction(quitAction.data());
         updateContext(globalContext);
         connect(globalContext, SIGNAL(actionsChanged()), this, SLOT(contextActionsChanged()));
         connect(globalContext, SIGNAL(activeChanged(bool)), this, SLOT(contextActiveChanged(bool)));
@@ -1067,7 +1090,7 @@ ActionManager::Private::updateActionsWhenNameOrTypeHaveChanged(Action *action)
     g_signal_handlers_disconnect_by_data(G_OBJECT(adata.gaction), action);
     g_clear_object(&adata.gaction);
     adata.gaction = (GSimpleAction *)g_object_ref(tmpdata.gaction);
-    if (globalContext->actions().contains(action) ||
+    if (globalContext->allActions().contains(action) ||
         (activeLocalContext != 0 && activeLocalContext->actions().contains(action))) {
         updateActionGroup();
     }

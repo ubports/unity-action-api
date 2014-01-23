@@ -59,7 +59,7 @@ void
 TestActionManager::cleanup()
 {
     // after each test make sure the manager is left in a clean state
-    QVERIFY(manager->actions().count() == expectedSize);
+    QVERIFY(manager->actions().count() == 1);
     QVERIFY(manager->localContexts().isEmpty());
 }
 
@@ -274,7 +274,6 @@ TestActionManager::actionPropertyChanges()
 void
 TestActionManager::deletedGlobalContext()
 {
-    expectedSize = 0;
     // detect if the client accidentally calls delete on global context
     // and make sure we don't crash
     delete manager->globalContext();
