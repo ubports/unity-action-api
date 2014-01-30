@@ -31,7 +31,7 @@ Item {
 
         localContexts: [ctx1, ctx2]
         
-        on_Quit: {}
+        onQuit: {}
 
         Action {
             id: globalaction
