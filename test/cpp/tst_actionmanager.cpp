@@ -59,8 +59,8 @@ void
 TestActionManager::cleanup()
 {
     // after each test make sure the manager is left in a clean state
-    Q_ASSERT(manager->actions().isEmpty());
-    Q_ASSERT(manager->localContexts().isEmpty());
+    QVERIFY(manager->actions().count() == 1);
+    QVERIFY(manager->localContexts().isEmpty());
 }
 
 
@@ -168,7 +168,7 @@ TestActionManager::contextOperations()
     manager->removeLocalContext(ctx1);
     manager->removeLocalContext(ctx2);
     manager->removeLocalContext(ctx3);
-    QVERIFY(manager->actions().count() == 0);
+    QVERIFY(manager->actions().count() == 1);
 }
 
 void
@@ -345,27 +345,27 @@ TestActionManager::deletedAction()
     manager->addLocalContext(ctx2);
 
     QSignalSpy spy(manager, SIGNAL(actionsChanged()));
-    QCOMPARE(manager->actions().count(), 5);
+    QCOMPARE(manager->actions().count(), 6);
 
     // delete action1 directly from globalContext
     delete action1;
     QCOMPARE(spy.count(), 1);
     QVERIFY(!manager->actions().contains(action1));
-    QCOMPARE(manager->actions().count(), 4);
+    QCOMPARE(manager->actions().count(), 5);
     action1 = 0;
 
     // delete action2 directly from ctx1
     delete action2;
     QCOMPARE(spy.count(), 2);
     QVERIFY(!manager->actions().contains(action2));
-    QCOMPARE(manager->actions().count(), 3);
+    QCOMPARE(manager->actions().count(), 4);
     action2 = 0;
 
     // remove action3 indirectly by destroying ctx1
     delete ctx1;
     QCOMPARE(spy.count(), 3);
     QVERIFY(!manager->actions().contains(action3));
-    QCOMPARE(manager->actions().count(), 2);
+    QCOMPARE(manager->actions().count(), 3);
     ctx1 = 0;
     action3 = 0;
 
@@ -374,7 +374,7 @@ TestActionManager::deletedAction()
     QCOMPARE(spy.count(), 5); // actionsChanged() gets called multiple times (once per each action in a context)
     QVERIFY(!manager->actions().contains(action4));
     QVERIFY(!manager->actions().contains(action5));
-    QCOMPARE(manager->actions().count(), 0);
+    QCOMPARE(manager->actions().count(), 1);
     QVERIFY(manager->localContexts().isEmpty());
     ctx2 = 0;
     action4 = 0;
@@ -413,32 +413,32 @@ TestActionManager::actionInMultipleContext()
 
     // 3 actions have been added in total
     QCOMPARE(spy.count(), 3);
-    QCOMPARE(manager->actions().count(), 3);
+    QCOMPARE(manager->actions().count(), 4);
 
     spy.clear();
     manager->removeLocalContext(ctx2); // removes only action3, action1 is shared.
     QCOMPARE(spy.count(), 1);
-    QCOMPARE(manager->actions().count(), 2);
+    QCOMPARE(manager->actions().count(), 3);
     // and now add it back
     manager->addLocalContext(ctx2);
     QCOMPARE(spy.count(), 2);
-    QCOMPARE(manager->actions().count(), 3);
+    QCOMPARE(manager->actions().count(), 4);
 
     spy.clear();
     gctx->removeAction(action1);
     QCOMPARE(spy.count(), 0);
-    QCOMPARE(manager->actions().count(), 3);
+    QCOMPARE(manager->actions().count(), 4);
     QVERIFY(manager->actions().contains(action1));
 
     ctx1->removeAction(action1);
     QCOMPARE(spy.count(), 0);
-    QCOMPARE(manager->actions().count(), 3);
+    QCOMPARE(manager->actions().count(), 4);
     QVERIFY(manager->actions().contains(action1));
 
     // remove the action from the last context
     ctx2->removeAction(action1);
     QCOMPARE(spy.count(), 1);
-    QCOMPARE(manager->actions().count(), 2);
+    QCOMPARE(manager->actions().count(), 3);
     QVERIFY(!manager->actions().contains(action1));
 
     manager->removeLocalContext(ctx1);

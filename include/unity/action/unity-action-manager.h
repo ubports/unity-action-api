@@ -57,6 +57,8 @@ signals:
     void localContextsChanged();
     void actionsChanged();
 
+    Q_REVISION(1) void quit();
+
 private:
         class Private;
         QScopedPointer<Private> d;
