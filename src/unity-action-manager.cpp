@@ -373,7 +373,7 @@ ActionManager::ActionManager(QObject *parent)
     d->quitAction->setText(_("Quit"));
     d->quitAction->setDescription(_("Quit the application"));
     d->quitAction->setKeywords(_("Exit;Close"));
-    connect(d->quitAction.data(), SIGNAL(triggered(QVariant)), this, SIGNAL(_quit()));
+    connect(d->quitAction.data(), SIGNAL(triggered(QVariant)), this, SIGNAL(quit()));
 
     d->createContext(d->globalContext);
     d->globalContext->addBuiltInAction(d->quitAction.data());
