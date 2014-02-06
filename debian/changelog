@@ -1,9 +1,16 @@
-unity-action-api (1.1.0-0ubuntu1) UNRELEASED; urgency=medium
+unity-action-api (1.1.0+14.04.20140206-0ubuntu1) trusty; urgency=medium
 
   [ Pete Woods ]
   * Add automatic quit action to HUD toolbar.
+  * Upload to trusty
 
- -- Pete Woods <pete.woods@canonical.com>  Wed, 22 Jan 2014 10:50:34 +0000
+  [ Dimitri John Ledkov ]
+  * Fix cross-compilation, by using correct qdoc at compile time.
+
+  [ Christian Dywan ]
+  * Don't compress files or it breaks reading the docs. (LP: #1202561)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 06 Feb 2014 12:02:11 +0000
 
 unity-action-api (1.0.0+13.10.20130716-0ubuntu1) saucy; urgency=low
 
