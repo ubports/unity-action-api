@@ -1,3 +1,11 @@
+unity-action-api (1.1.0+17.04.20170405-0ubuntu1) zesty; urgency=medium
+
+  [ Łukasz 'sil2100' Zemczak ]
+  * Switch qtbase5-dev-tools built-dep to qttools5-dev-tools as qdoc has
+    moved. Stop using transitional dependencies. (LP: #1626469)
+
+ -- Łukasz Zemczak <lukasz.zemczak@canonical.com>  Wed, 05 Apr 2017 08:58:18 +0000
+
 unity-action-api (1.1.0+14.04.20140304-0ubuntu1) trusty; urgency=low
 
   * New rebuild forced
