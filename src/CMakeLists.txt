@@ -28,13 +28,20 @@ set(PUBLIC_HEADERS
     ${PUBLIC_HEADER_DIR}/unity-action-context.h
 )
 
-include_directories(${HUD_INCLUDE_DIRS})
-
 add_library(unity-action-qt SHARED
     ${CORE_SRCS}
     ${PUBLIC_HEADERS} # public headers have to be included here for Q_DECL_EXPORT to work properly
 )
-target_link_libraries (unity-action-qt ${HUD_LIBRARIES})
+
+if(${HUD_FOUND})
+  include_directories(${HUD_INCLUDE_DIRS})
+  target_link_libraries (unity-action-qt ${HUD_LIBRARIES})
+else()
+  include_directories(${GLIB2_INCLUDE_DIRS})
+  include_directories(${GOBJECT2_INCLUDE_DIRS})
+  include_directories(${GIO2_INCLUDE_DIRS})
+  target_link_libraries(unity-action-qt ${GLIB2_LIBRARIES} ${GOBJECT2_LIBRARIES} ${GIO2_LIBRARIES})
+endif()
 
 qt5_use_modules(unity-action-qt Core)
 

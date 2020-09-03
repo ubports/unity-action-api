@@ -16,7 +16,16 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/mod
 option(basic_warnings "Basic compiler warnings." ON)
 include(FindPkgConfig)
 
-pkg_search_module(HUD REQUIRED hud-2)
+pkg_search_module(HUD hud-2)
+if(${HUD_FOUND})
+    message("Found libhud, bulding with hud")
+    add_definitions(-DHAVE_HUD=1)
+else()
+    message(WARNING "Did not find libhud, bulding without")
+    pkg_check_modules(GLIB2 REQUIRED glib-2.0)
+    pkg_check_modules(GOBJECT2 REQUIRED gobject-2.0)
+    pkg_check_modules(GIO2 REQUIRED gio-2.0)
+endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11 -fno-permissive -pedantic -Wall -Wextra")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
